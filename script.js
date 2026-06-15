@@ -156,12 +156,25 @@ async function register() {
   }
 }
 function setCurrentUser(user) {
-  currentUser = user;
-  document.getElementById('auth-section').style.display = 'none';
-  document.getElementById('user-section').style.display = 'block';
-  document.getElementById('user-avatar').textContent = user.username.charAt(0).toUpperCase();
-  if (user.role === 'admin') document.getElementById('admin-btn').style.display = 'block';
-  else document.getElementById('admin-btn').style.display = 'none';
+  currentUser = user; // Loyihangizdagi global o'zgaruvchi
+
+  if (user) {
+    // Foydalanuvchi ma'lumotlarini brauzer xotirasiga saqlaymiz
+    localStorage.setItem('lemado_session', JSON.stringify(user));
+    
+    // Agar roli admin bo'lsa, admin panel tugmasini ko'rsatamiz
+    if (user.role === 'admin') {
+      const adminBtn = document.getElementById('admin-btn');
+      if (adminBtn) adminBtn.style.display = 'block';
+    }
+    
+    // Bu yerda login tugmasini yashirish yoki profil tugmasini ko'rsatish kodlaringiz bo'lishi mumkin
+  } else {
+    // Tizimdan chiqilganda xotirani tozalaymiz
+    localStorage.removeItem('lemado_session');
+    const adminBtn = document.getElementById('admin-btn');
+    if (adminBtn) adminBtn.style.display = 'none';
+  }
 }
 
 function logout() {
