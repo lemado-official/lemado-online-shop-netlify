@@ -60,7 +60,7 @@ async function loadServerData() {
     renderStoresHome();
   } catch (err) {
     console.error("Serverdan ma'lumot yuklashda xatolik:", err);
-    showToast("⚠️ Ma'lumotlarni yuklashda xatolik yuz berdi.");
+    showToast("Ma'lumotlarni yuklashda xatolik yuz berdi!");
   }
 }
 
@@ -79,7 +79,7 @@ async function loadAllStoresForAdmin() {
 }
 
 // ==========================================
-// AUTHENTICATION
+// AUTHENTICATION (TIZIMGA KIRISH VA RO'YXATDAN O'TISH)
 // ==========================================
 async function login() {
   if (!rateLimitCheck('login')) { showToast('⚠️ Juda ko\'p urinish. 1 daqiqa kuting.'); return; }
@@ -89,7 +89,8 @@ async function login() {
   const errEl = document.getElementById('login-err');
   if (!usernameInput || !passwordInput || !errEl) return;
 
-  const username = usernameInput.value.trim();
+  // MUHIM: Login paytida ham username kichik harfga o'giriladi (toLowerCase)
+  const username = usernameInput.value.trim().toLowerCase();
   const password = passwordInput.value;
   errEl.textContent = '';
 
@@ -101,15 +102,14 @@ async function login() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
+
     const data = await response.json();
 
     if (data.success) {
       setCurrentUser(data.user);
       closeModal('login-modal');
-      showToast('✅ Xush kelibsiz, ' + sanitize(data.user.username) + '!');
+      showToast('Xush kelibsiz, ' + sanitize(data.user.username) + '!');
       if (currentPage === 'my-store') renderMyStore();
-      // Foydalanuvchining shaxsiy buyurtmalarini bazadan yuklash
-      loadUserOrders();
     } else {
       errEl.textContent = data.message || "Xatolik yuz berdi";
     }
@@ -141,10 +141,12 @@ async function register() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, name, email })
     });
+
     const data = await response.json();
 
     if (data.success) {
-      showToast('🎉 Muvaffaqiyatli ro\'yxatdan o\'tdingiz! Endi tizimga kiring.');
+      // Apostrof xatosi backtick (`) yordamida to'g'rilandi
+      showToast(`🎉 Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi tizimga kiring.`);
       switchAuthTab('login');
     } else {
       errEl.textContent = data.message;
@@ -153,7 +155,6 @@ async function register() {
     errEl.textContent = "Server ruxsat bermadi!";
   }
 }
-
 function setCurrentUser(user) {
   currentUser = user;
   document.getElementById('auth-section').style.display = 'none';
