@@ -185,7 +185,7 @@ function logout() {
   document.getElementById('admin-btn').style.display = 'none';
   showAdmin(false);
   showPage('home');
-  showToast('👋 Tizimdan chiqildi');
+  showToast('Tizimdan chiqildi');
 }
 
 function switchAuthTab(tab) {
