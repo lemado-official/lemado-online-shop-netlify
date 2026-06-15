@@ -156,24 +156,35 @@ async function register() {
   }
 }
 function setCurrentUser(user) {
-  currentUser = user; // Loyihangizdagi global o'zgaruvchi
+  currentUser = user; // Global o'zgaruvchi
+
+  // HTML ichidagi tugmalarni ID bo'yicha topamiz
+  // DIQQAT: Agar sizda ID nomlari boshqacha bo'lsa, o'zingiznikiga moslang (masalan: 'login-btn' yoki 'auth-btn')
+  const loginBtn = document.getElementById('login-btn') || document.getElementById('auth-btn'); 
+  const logoutBtn = document.getElementById('logout-btn');
+  const adminBtn = document.getElementById('admin-btn');
 
   if (user) {
-    // Foydalanuvchi ma'lumotlarini brauzer xotirasiga saqlaymiz
+    // 1. Sessiyani brauzer xotirasiga yozish
     localStorage.setItem('lemado_session', JSON.stringify(user));
     
-    // Agar roli admin bo'lsa, admin panel tugmasini ko'rsatamiz
-    if (user.role === 'admin') {
-      const adminBtn = document.getElementById('admin-btn');
-      if (adminBtn) adminBtn.style.display = 'block';
-    }
+    // 2. UI-ni yangilash: Tizimga kirganda "Kirish" tugmasi yo'qoladi, "Chiqish" chiqadi
+    if (loginBtn) loginBtn.style.display = 'none';       // Kirish tugmasini yashirish
+    if (logoutBtn) logoutBtn.style.display = 'block';    // Chiqish tugmasini ko'rsatish
     
-    // Bu yerda login tugmasini yashirish yoki profil tugmasini ko'rsatish kodlaringiz bo'lishi mumkin
+    // 3. Agar roli admin bo'lsa, Admin panel tugmasini ochish
+    if (user.role === 'admin') {
+      if (adminBtn) adminBtn.style.display = 'block';
+    } else {
+      if (adminBtn) adminBtn.style.display = 'none';
+    }
   } else {
-    // Tizimdan chiqilganda xotirani tozalaymiz
+    // Tizimdan chiqilganda xotirani tozalash va tugmalarni joyiga qaytarish
     localStorage.removeItem('lemado_session');
-    const adminBtn = document.getElementById('admin-btn');
-    if (adminBtn) adminBtn.style.display = 'none';
+    
+    if (loginBtn) loginBtn.style.display = 'block';     // Kirish tugmasini qaytarish
+    if (logoutBtn) logoutBtn.style.display = 'none';    // Chiqish tugmasini yashirish
+    if (adminBtn) adminBtn.style.display = 'none';      // Admin panelni yashirish
   }
 }
 
