@@ -178,14 +178,9 @@ function setCurrentUser(user) {
 }
 
 function logout() {
-  currentUser = null;
-  ORDERS = [];
-  document.getElementById('auth-section').style.display = 'block';
-  document.getElementById('user-section').style.display = 'none';
-  document.getElementById('admin-btn').style.display = 'none';
-  showAdmin(false);
-  showPage('home');
-  showToast('Tizimdan chiqildi');
+  setCurrentUser(null);
+  showToast('👋 Tizimdan chiqdingiz');
+  location.reload(); // Sahifani yangilab tozalaymiz
 }
 
 function switchAuthTab(tab) {
