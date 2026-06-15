@@ -1,3 +1,5 @@
+// Render sizga bergan URL manzilini yozasiz (oxirida /api bilan)
+const API_URL = "https://lemado-backend.onrender.com/api";
 // ===================== DATA STORE =====================
 const DB = {
   users: [
