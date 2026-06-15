@@ -592,7 +592,6 @@ function renderStoresTable() {
       <td>${sanitize(s.category)}</td>
       <td><span class="tag ${s.isVerified ? 'tag-green' : 'tag-orange'}">${s.isVerified ? 'Faol' : 'Kutilmoqda'}</span></td>
       <td>
-        ${}
         ${!s.isVerified ? `<button class="action-btn approve" onclick="verifyStore('${sId}')">✓ Tasdiqlash</button>` : '<span style="font-size:12px;color:var(--gray-500)">Tasdiqlangan</span>'}
       </td>
     </tr>`;
