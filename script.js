@@ -667,3 +667,18 @@ window.addEventListener('load', () => {
 
   loadServerData();
 });
+// Sahifa har safar yuklanganda brauzer xotirasini tekshiramiz
+document.addEventListener('DOMContentLoaded', () => {
+  const savedUser = localStorage.getItem('lemado_session');
+  
+  if (savedUser) {
+    try {
+      const user = JSON.parse(savedUser);
+      // Xotirada foydalanuvchi topilsa, uni qaytadan aktivlashtiramiz
+      setCurrentUser(user);
+    } catch (e) {
+      console.error("Sessiyani yuklashda xatolik:", e);
+      localStorage.removeItem('lemado_session');
+    }
+  }
+});
