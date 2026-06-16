@@ -425,3 +425,76 @@ footer .footer-logo span { color: var(--red); }
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* ADMIN PANEL MOBILE STYLES */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column !important;
+  }
+  
+  .admin-sidebar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    height: 65px !important;
+    flex-direction: row !important;
+    border-right: none !important;
+    border-top: 1px solid var(--gray-200) !important;
+    background: #ffffff !important;
+    z-index: 1000 !important;
+    padding: 0 10px !important;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.08) !important;
+  }
+
+  .admin-logo {
+    display: none !important;
+  }
+
+  .admin-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .admin-nav-item {
+    flex-direction: column !important;
+    gap: 4px !important;
+    padding: 6px 10px !important;
+    font-size: 10px !important;
+    margin-bottom: 0 !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    flex: 1 !important;
+    justify-content: center !important;
+  }
+
+  .admin-nav-item span {
+    font-size: 18px !important; /* Emotikonlar kattaligi */
+  }
+
+  .admin-content {
+    width: 100% !important;
+    padding-bottom: 80px !important; /* Pastki menyu kontentni yopib qo'ymasligi uchun */
+  }
+
+  .admin-header {
+    padding: 12px 16px !important;
+  }
+
+  .admin-section {
+    padding: 16px !important;
+  }
+
+  /* Mobil jadval tugmalari */
+  .action-btn {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    margin: 2px !important;
+    display: inline-block !important;
+  }
+}
