@@ -757,16 +757,15 @@ async function verifyStore(id) {
 async function rejectStore(id) {
   if (!confirm("Haqiqatdan ham ushbu do'kon arizasini rad etmoqchimisiz yoki o'chirmoqchimisiz?")) return;
   try {
-    // Diqqat: metod yoki URL backendga qarab o'zgarishi mumkin
-    const res = await fetch(`${API_URL}/admin/stores/${id}/reject`, { 
+    // Backend yo'lagiga mos ravishda /reject so'zi olib tashlandi
+    const res = await fetch(`${API_URL}/admin/stores/${id}`, { 
       method: 'DELETE' 
     });
     
-    // Agar server 200-299 dan tashqari xato qaytarsa (masalan 404)
     if (!res.ok) {
-      const errorText = await res.text(); // HTML yoki xato matnini o'qiymiz
-      console.error("Backenddan kelgan xatolik:", errorText);
-      showToast(`Xatolik: Server ${res.status} qaytardi (Konsolni ko'ring)`);
+      const errorText = await res.text();
+      console.error("Backenddan xato keldi:", errorText);
+      showToast(`Xatolik: Server ${res.status} qaytardi`);
       return;
     }
 
@@ -780,8 +779,8 @@ async function rejectStore(id) {
       showToast(data.message || 'Xatolik yuz berdi.');
     }
   } catch (err) {
-    console.error("Koddagi yoki tarmoqdagi xatolik:", err);
-    showToast('Xatolik yuz berdi. Brauzer konsolini (F12) tekshiring.');
+    console.error("Koddagi xatolik:", err);
+    showToast('Xatolik yuz berdi. Konsolni tekshiring.');
   }
 }
 
