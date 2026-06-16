@@ -218,8 +218,8 @@ app.put('/api/admin/stores/:id/verify', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-// Do'kon arizasini rad etish (bazadan o'chirish) yo'lagi
-router.delete('/admin/stores/:id', async (req, res) => {
+// router.delete o'rniga app.delete yoziladi:
+app.delete('/admin/stores/:id', async (req, res) => {
   try {
     const storeId = req.params.id;
 
