@@ -78,6 +78,34 @@ async function loadAllStoresForAdmin() {
   }
 }
 
+// Admin uchun barcha mahsulotlarni yuklash
+async function loadAllProductsForAdmin() {
+  try {
+    const res = await fetch(`${API_URL}/products`);
+    
+    // Agar server 404 yoki boshqa xato bersa, kod qulab tushmasligi uchun tekshiramiz
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Backenddan xato keldi:", errorText);
+      renderAdminProductsTable([]); // Xato bo'lsa jadval bo'sh qoladi
+      return;
+    }
+
+    const data = await res.json();
+    
+    let productsList = [];
+    if (data.success && data.products) productsList = data.products;
+    else if (Array.isArray(data)) productsList = data;
+    else if (data.data) productsList = data.data;
+
+    // Mahsulotlar jadvalini chizadigan funksiya (nomini o'zingiznikiga moslang)
+    renderAdminProductsTable(productsList);
+  } catch (err) {
+    console.error("Mahsulotlarni yuklashda xatolik:", err);
+    renderAdminProductsTable([]);
+  }
+}
+
 // ==========================================
 // GLOBAL STATE (Tizimning umumiy holati)
 // ==========================================
