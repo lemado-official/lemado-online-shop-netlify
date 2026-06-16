@@ -219,7 +219,7 @@ app.put('/api/admin/stores/:id/verify', async (req, res) => {
   }
 });
 // router.delete o'rniga app.delete yoziladi:
-app.delete('/admin/stores/:id', async (req, res) => {
+app.delete('/api/admin/stores/:id', async (req, res) => {
   try {
     const storeId = req.params.id;
 
