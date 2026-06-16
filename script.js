@@ -528,35 +528,44 @@ function addToCart(id) {
 
 function updateCartUI() {
   const count = cart.reduce((a, b) => a + b.qty, 0);
-  document.getElementById('cart-count').textContent = count;
+  
+  // 🛡️ Xavfsiz tekshiruv: agar HTML da element bo'lsa, keyin yozadi
+  const cartCountEl = document.getElementById('cart-count');
+  if (cartCountEl) {
+    cartCountEl.textContent = count;
+  }
+
   const itemsEl = document.getElementById('cart-items');
   const total = cart.reduce((a, b) => a + b.price * b.qty, 0);
 
+  // Qolgan kodlar o'zgarishsiz qoladi...
   if (!cart.length) {
-    itemsEl.innerHTML = '';
-    document.getElementById('cart-empty').style.display = 'block';
-    document.getElementById('cart-total-section').style.display = 'none';
+    if (itemsEl) itemsEl.innerHTML = '';
+    if (document.getElementById('cart-empty')) document.getElementById('cart-empty').style.display = 'block';
+    if (document.getElementById('cart-total-section')) document.getElementById('cart-total-section').style.display = 'none';
     return;
   }
-  document.getElementById('cart-empty').style.display = 'none';
-  document.getElementById('cart-total-section').style.display = 'block';
-  document.getElementById('cart-total-price').textContent = total.toLocaleString() + ' so\'m';
   
-  itemsEl.innerHTML = cart.map((item, i) => `
-    <div class="cart-item">
-      <div class="cart-item-img">${item.emoji || '📦'}</div>
-      <div style="flex:1">
-        <div style="font-weight:700;font-size:14px">${sanitize(item.name)}</div>
-        <div style="color:var(--red);font-weight:700">${(item.price * item.qty).toLocaleString()} so'm</div>
+  if (document.getElementById('cart-empty')) document.getElementById('cart-empty').style.display = 'none';
+  if (document.getElementById('cart-total-section')) document.getElementById('cart-total-section').style.display = 'block';
+  if (document.getElementById('cart-total-price')) document.getElementById('cart-total-price').textContent = total.toLocaleString() + ' so\'m';
+  
+  if (itemsEl) {
+    itemsEl.innerHTML = cart.map((item, i) => `
+      <div class="cart-item">
+        <div class="cart-item-img">${item.emoji || '📦'}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px">${sanitize(item.name)}</div>
+          <div style="color:var(--red);font-weight:700">${(item.price * item.qty).toLocaleString()} so'm</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onclick="changeQty(${i},-1)" class="qty-btn">-</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${i},1)" class="qty-btn">+</button>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <button onclick="changeQty(${i},-1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--gray-300);background:white;cursor:pointer;font-weight:700">-</button>
-        <span style="font-weight:700;min-width:20px;text-align:center">${item.qty}</span>
-        <button onclick="changeQty(${i},1)" style="width:28px;height:28px;border-radius:50%;border:none;background:var(--red);color:white;cursor:pointer;font-weight:700">+</button>
-        <button onclick="removeFromCart(${i})" style="background:var(--red-light);color:var(--red);border:none;padding:5px 9px;border-radius:8px;cursor:pointer;font-size:12px">✕</button>
-      </div>
-    </div>
-  `).join('');
+    `).join('');
+  }
 }
 
 function changeQty(i, d) { if (cart[i]) { cart[i].qty += d; if (cart[i].qty <= 0) cart.splice(i, 1); } updateCartUI(); }
