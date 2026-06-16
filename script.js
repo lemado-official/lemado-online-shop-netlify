@@ -647,14 +647,63 @@ function showAdminTab(tab) {
   const el = document.getElementById('admin-tab-' + tab);
   if (el) el.classList.add('active');
   if (event && event.currentTarget) event.currentTarget.classList.add('active');
-  if (tab === 'users') renderUsersTable();
+  if (tab === 'users') loadAllUsersForAdmin(); // renderUsersTable() o'rniga yuklash funksiyasi qo'yildi
   if (tab === 'stores-admin') loadAllStoresForAdmin();
 }
 
-function renderUsersTable() {
+// Admin uchun barcha foydalanuvchilarni bazadan yuklash
+async function loadAllUsersForAdmin() {
+  try {
+    const res = await fetch(`${API_URL}/users`); // Agar maxsus yo'lak bo'lsa `/admin/users` qilinadi
+    const data = await res.json();
+    
+    let usersList = [];
+    if (data.success && data.users) usersList = data.users;
+    else if (Array.isArray(data)) usersList = data;
+    else if (data.data) usersList = data.data;
+
+    renderUsersTable(usersList);
+  } catch (err) {
+    console.error("Foydalanuvchilarni yuklashda xatolik:", err);
+    // Xatolik bo'lsa hech bo'lmasa joriy adminni ko'rsatib turadi
+    renderUsersTable([]);
+  }
+}
+
+function renderUsersTable(users) {
   const t = document.getElementById('users-table');
   if (!t) return;
-  t.innerHTML = `<tr><td><strong>${sanitize(currentUser.username)}</strong></td><td>Admin User</td><td>admin@lemado.uz</td><td><span class="tag tag-blue">admin</span></td><td><span class="tag tag-green">active</span></td><td><span style="color:var(--gray-400);font-size:12px">Boshqaruvchi</span></td></tr>`;
+
+  // Har doim joriy admin qatorini boshiga qo'shamiz
+  let html = `<tr>
+    <td><strong>${sanitize(currentUser.username)} (Siz)</strong></td>
+    <td>Admin User</td>
+    <td>admin@lemado.uz</td>
+    <td><span class="tag tag-blue">admin</span></td>
+    <td><span class="tag tag-green">active</span></td>
+    <td><span style="color:var(--gray-400);font-size:12px">Boshqaruvchi</span></td>
+  </tr>`;
+
+  // Qolgan bazadan kelgan userlarni massiv bo'yicha aylantiramiz
+  if (users && users.length > 0) {
+    users.forEach(u => {
+      // O'zimizni takroran chiqarmaslik uchun tekshiramiz
+      if (u.username !== currentUser.username) {
+        html += `<tr>
+          <td><strong>${sanitize(u.username)}</strong></td>
+          <td>${sanitize(u.name || u.firstName || '-')}</td>
+          <td>${sanitize(u.email || '-')}</td>
+          <td><span class="tag ${u.role === 'admin' ? 'tag-blue' : 'tag-orange'}">${u.role || 'user'}</span></td>
+          <td><span class="tag tag-green">${u.status || 'active'}</span></td>
+          <td>
+            <span style="color:var(--gray-400); font-size:12px;">Ruxsat etilgan</span>
+          </td>
+        </tr>`;
+      }
+    });
+  }
+  
+  t.innerHTML = html;
 }
 
 function renderStoresTable() {
