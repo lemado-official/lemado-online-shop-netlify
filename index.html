@@ -200,27 +200,24 @@
         <input type="text" placeholder="Mahsulot yoki do'kon qidiring..." id="search-input" oninput="searchProducts()">
       </div>
       <div class="nav-actions">
-        <button class="btn btn-outline" onclick="showPage('stores')">🏪 Do'konlar</button>
-        <button class="btn btn-outline" onclick="showPage('orders')">📦 Buyurtmalar</button>
-        <button class="cart-btn" onclick="toggleCart()">
-          🛒 Savatcha
-          <span class="cart-badge" id="cart-count">0</span>
-        </button>
-        <div id="auth-section">
-          <button class="btn btn-red" onclick="openModal('login-modal')">Kirish</button>
-        </div>
-        <div id="user-section" style="display:none" class="dropdown">
-          <div class="user-avatar" id="user-avatar" onclick="toggleDropdown()">U</div>
-          <div class="dropdown-menu" id="dropdown-menu">
-            <div class="dropdown-item" onclick="showPage('my-store')">🏪 Mening do'konim</div>
-            <div class="dropdown-item" onclick="showPage('orders')">📦 Buyurtmalarim</div>
-            <div class="dropdown-item" id="admin-btn" style="display:none" onclick="showAdmin()">⚙️ Admin panel</div>
-            <div style="height:1px;background:var(--gray-100);margin:6px 0"></div>
-            <div class="dropdown-item" style="color:var(--red)" onclick="logout()">🚪 Chiqish</div>
-          </div>
-        </div>
-      </div>
+  <!-- Savat tugmasi (Doim turadi) -->
+  <button class="cart-btn">
+    🛒 <span class="cart-badge">0</span>
+  </button>
+
+  <!-- 1. KİRİSH TUGMASI (Mehmonlar uchun) -->
+  <button id="auth-login-btn" class="btn btn-red" onclick="openLoginModal()">Kirish</button>
+
+  <!-- 2. PROFIL DROPDOWN (Tizimga kirganlar uchun - boshida yashirin) -->
+  <div id="user-profile-wrap" class="dropdown hidden">
+    <div class="user-avatar" onclick="toggleDropdown(event)">L</div>
+    <div class="dropdown-menu">
+      <div class="dropdown-item">Mening profilim</div>
+      <div class="dropdown-item" onclick="openAdminPanel()">Admin Panel</div>
+      <div class="dropdown-item" style="color: var(--red);" onclick="logoutUser()">Chiqish</div>
     </div>
+  </div>
+</div>
   </nav>
 
   <!-- HOME PAGE -->
