@@ -958,7 +958,8 @@ function toggleDropdown(event) {
 
 // Admin panel uchun barcha mahsulotlar jadvalini chizish
 function renderAdminProductsTable(products) {
-  const t = document.getElementById('admin-products-table'); // HTML dagi tbody ID-si
+  // Yangi (to'g'ri) kodingiz:
+  const t = document.getElementById('products-table-admin');
   if (!t) return;
 
   if (!products || products.length === 0) {
