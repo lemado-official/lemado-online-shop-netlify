@@ -82,14 +82,16 @@ async function loadAllStoresForAdmin() {
 async function loadAllProductsForAdmin() {
   try {
     const res = await fetch(`${API_URL}/products`);
+    const data = await res.json();
     
-    // Agar server 404 yoki boshqa xato bersa, kod qulab tushmasligi uchun tekshiramiz
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error("Backenddan xato keldi:", errorText);
-      renderAdminProductsTable([]); // Xato bo'lsa jadval bo'sh qoladi
-      return;
+    // Agar success: true kelsa, render qilsin
+    if (data.success) {
+      renderAdminProductsTable(data.products);
     }
+  } catch (err) {
+    console.error("Xatolik:", err);
+  }
+}
 
     const data = await res.json();
     
