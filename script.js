@@ -79,10 +79,19 @@ async function loadAllStoresForAdmin() {
 }
 
 // ==========================================
+// GLOBAL STATE (Tizimning umumiy holati)
+// ==========================================
+let currentUser = null; // Tizimga kirgan foydalanuvchi ma'lumotlarini saqlaydi
+
+// ==========================================
 // AUTHENTICATION (TIZIMGA KIRISH VA RO'YXATDAN O'TISH)
 // ==========================================
+
 async function login() {
-  if (!rateLimitCheck('login')) { showToast('⚠️ Juda ko\'p urinish. 1 daqiqa kuting.'); return; }
+  if (!rateLimitCheck('login')) { 
+    showToast('⚠️ Juda ko\'p urinish. 1 daqiqa kuting.'); 
+    return; 
+  }
   
   const usernameInput = document.getElementById('login-username');
   const passwordInput = document.getElementById('login-password');
@@ -94,7 +103,10 @@ async function login() {
   const password = passwordInput.value;
   errEl.textContent = '';
 
-  if (!username || !password) { errEl.textContent = 'Username va parol kerak'; return; }
+  if (!username || !password) { 
+    errEl.textContent = 'Username va parol kerak'; 
+    return; 
+  }
 
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
@@ -106,7 +118,12 @@ async function login() {
     const data = await response.json();
 
     if (data.success) {
+      // 💾 Brauzer xotirasiga saqlash (Sahifa yangilanganda saqlanib qolishi uchun)
+      localStorage.setItem('lemado_user', JSON.stringify(data.user));
+      
+      // 🔄 Global holatni va Navbardagi UI elementlarini yangilash
       setCurrentUser(data.user);
+      
       closeModal('login-modal');
       showToast('Xush kelibsiz, ' + sanitize(data.user.username) + '!');
       if (currentPage === 'my-store') renderMyStore();
@@ -145,7 +162,6 @@ async function register() {
     const data = await response.json();
 
     if (data.success) {
-      // Apostrof xatosi backtick (`) yordamida to'g'rilandi
       showToast(`🎉 Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi tizimga kiring.`);
       switchAuthTab('login');
     } else {
@@ -155,53 +171,93 @@ async function register() {
     errEl.textContent = "Server ruxsat bermadi!";
   }
 }
-function setCurrentUser(user) {
-  currentUser = user; // Global o'zgaruvchi
 
-  // HTML ichidagi tugmalarni ID bo'yicha topamiz
-  // DIQQAT: Agar sizda ID nomlari boshqacha bo'lsa, o'zingiznikiga moslang (masalan: 'login-btn' yoki 'auth-btn')
-  const loginBtn = document.getElementById('login-btn') || document.getElementById('auth-btn'); 
-  const logoutBtn = document.getElementById('logout-btn');
-  const adminBtn = document.getElementById('admin-btn');
+// ==========================================
+// USER STATE & UI INTERACTION (MARKAZIY BOSHQARUV)
+// ==========================================
+
+function setCurrentUser(user) {
+  currentUser = user; // Global o'zgaruvchini yangilaymiz
+
+  // Navbardagi elementlarni ID orqali aniqlab olamiz
+  const loginBtn = document.getElementById('auth-login-btn');
+  const profileWrap = document.getElementById('user-profile-wrap');
 
   if (user) {
-    // 1. Sessiyani brauzer xotirasiga yozish
-    localStorage.setItem('lemado_session', JSON.stringify(user));
+    // 🔓 FOYDALANUVCHI TIZIMGA KIRGANDA (Login muvaffaqiyatli bo'lsa)
+    if (loginBtn) loginBtn.classList.add('hidden'); // Kirish tugmasini butunlay yashirish
     
-    // 2. UI-ni yangilash: Tizimga kirganda "Kirish" tugmasi yo'qoladi, "Chiqish" chiqadi
-    if (loginBtn) loginBtn.style.display = 'none';       // Kirish tugmasini yashirish
-    if (logoutBtn) logoutBtn.style.display = 'block';    // Chiqish tugmasini ko'rsatish
-    
-    // 3. Agar roli admin bo'lsa, Admin panel tugmasini ochish
-    if (user.role === 'admin') {
-      if (adminBtn) adminBtn.style.display = 'block';
-    } else {
-      if (adminBtn) adminBtn.style.display = 'none';
+    if (profileWrap) {
+      profileWrap.classList.remove('hidden'); // Profil avatar konteynerini ko'rsatish
+      
+      // Avatarga foydalanuvchi ismining birinchi harfini katta qilib yozish
+      const avatar = profileWrap.querySelector('.user-avatar');
+      if (avatar) {
+        const firstLetter = (user.name || user.username || 'L').charAt(0).toUpperCase();
+        avatar.innerText = firstLetter;
+      }
+
+      // Agar foydalanuvchi roli admin bo'lsa, dropdown ichidagi Admin Panel tugmasini ko'rsatish
+      const adminItem = profileWrap.querySelector('[onclick="openAdminPanel()"]');
+      if (adminItem) {
+        if (user.role === 'admin') {
+          adminItem.classList.remove('hidden');
+        } else {
+          adminItem.classList.add('hidden');
+        }
+      }
     }
   } else {
-    // Tizimdan chiqilganda xotirani tozalash va tugmalarni joyiga qaytarish
-    localStorage.removeItem('lemado_session');
-    
-    if (loginBtn) loginBtn.style.display = 'block';     // Kirish tugmasini qaytarish
-    if (logoutBtn) logoutBtn.style.display = 'none';    // Chiqish tugmasini yashirish
-    if (adminBtn) adminBtn.style.display = 'none';      // Admin panelni yashirish
+    // 🔒 FOYDALANUVCHI TIZIMDAN CHIQGANDA (Logout bo'lsa yoki sessiya tugasa)
+    if (loginBtn) loginBtn.classList.remove('hidden'); // Kirish tugmasini qaytarish
+    if (profileWrap) {
+      profileWrap.classList.add('hidden'); // Profil darchasini yashirish
+      profileWrap.classList.remove('open'); // Ochiq qolgan dropdownni yopish
+    }
   }
 }
 
-function logout() {
-  setCurrentUser(null);
-  showToast('👋 Tizimdan chiqdingiz');
-  location.reload(); // Sahifani yangilab tozalaymiz
+// 🚪 TIZIMDAN CHIQISH FUNKSIYASI
+function logoutUser() {
+  localStorage.removeItem('lemado_user'); // Brauzer xotirasini tozalaymiz
+  setCurrentUser(null); // UI holatini boshlang'ich holatga qaytaramiz
+  showToast('Tizimdan muvaffaqiyatli chiqdingiz.');
+  if (typeof navigateTo === 'function') navigateTo('home'); // Bosh sahifaga qaytarish
 }
 
-function switchAuthTab(tab) {
-  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+// 👤 PROFIL AVATARI BOSILGANDA DROPDOWN MENYUNI OCHISH/YOPISH
+function toggleDropdown(event) {
+  if (event) event.stopPropagation(); // Klik oynaning boshqa qismlariga ta'sir qilmasligi uchun
+  const profileWrap = document.getElementById('user-profile-wrap');
+  if (profileWrap) {
+    profileWrap.classList.toggle('open');
+  }
+}
+
+// ==========================================
+// AUTOMATIC SESSIONS & LISTENERS (YORDAMCHI KODLAR)
+// ==========================================
+
+// Sahifa yuklanayotganda ishga tushuvchi hodisalar
+window.addEventListener('DOMContentLoaded', () => {
+  // 1. Avvaldan saqlangan foydalanuvchi sessiyasi bormi yoki yo'qligini tekshirish (F5 bosilganda)
+  const savedUser = localStorage.getItem('lemado_user');
+  if (savedUser) {
+    try {
+      setCurrentUser(JSON.parse(savedUser));
+    } catch (e) {
+      localStorage.removeItem('lemado_user');
+    }
+  }
+
+  // 2. Ekran bo'ylab ixtiyoriy joy bosilganda ochiq qolgan profil menyusini avtomat yopish
+  window.addEventListener('click', () => {
+    const profileWrap = document.getElementById('user-profile-wrap');
+    if (profileWrap) {
+      profileWrap.classList.remove('open');
+    }
   });
-}
-
+});
 // ==========================================
 // PAGES & NAVIGATION
 // ==========================================
