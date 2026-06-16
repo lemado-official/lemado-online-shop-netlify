@@ -81,7 +81,7 @@ async function loadAllStoresForAdmin() {
 // ==========================================
 // GLOBAL STATE (Tizimning umumiy holati)
 // ==========================================
-let currentUser = null; // Tizimga kirgan foydalanuvchi ma'lumotlarini saqlaydi
+
 
 // ==========================================
 // AUTHENTICATION (TIZIMGA KIRISH VA RO'YXATDAN O'TISH)
