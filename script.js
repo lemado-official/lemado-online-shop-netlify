@@ -313,14 +313,16 @@ async function showAdmin(show = true) {
   document.getElementById('admin-panel').style.display = show ? 'block' : 'none';
   document.getElementById('main-site').style.display = show ? 'none' : 'block';
   
-    if (show) {
-  updateAdminStats();
-  await loadAllStoresForAdmin();
-  await loadAllUsersForAdmin(); // Mana shu qatorni ham qo'shib qo'ying
-  document.getElementById('admin-welcome').textContent = '👤 ' + currentUser.username;
+  if (show) {
+    updateAdminStats();
+    await loadAllStoresForAdmin();
+    await loadAllUsersForAdmin(); 
+    await loadAllProductsForAdmin(); // ✨ BU YERGA HAM QO'SHIB QO'YING
+    document.getElementById('admin-welcome').textContent = '👤 ' + currentUser.username;
+  }
 }
   
-}
+
 
 function exitAdmin() { showAdmin(false); showPage('home'); }
 
@@ -952,6 +954,29 @@ function toggleDropdown(event) {
   if (profileWrap) {
     profileWrap.classList.toggle('open');
   }
+}
+
+// Admin panel uchun barcha mahsulotlar jadvalini chizish
+function renderAdminProductsTable(products) {
+  const t = document.getElementById('admin-products-table'); // HTML dagi tbody ID-si
+  if (!t) return;
+
+  if (!products || products.length === 0) {
+    t.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-400)">Hozircha mahsulotlar mavjud emas</td></tr>`;
+    return;
+  }
+
+  t.innerHTML = products.map(p => {
+    return `<tr>
+      <td><strong>${sanitize(p.name)}</strong></td>
+      <td>${sanitize(p.store || 'Lemado Do\'kon')}</td>
+      <td><span class="tag tag-blue">${sanitize(p.category || 'Umumiy')}</span></td>
+      <td><strong>${p.price.toLocaleString()} so'm</strong></td>
+      <td>
+        <span class="tag tag-green">Faol</span>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
 // 🌍 EKRANNING IXTIYORIY JOYI BOSILGANDA MENYUNI AVTOMAT YOPISH
