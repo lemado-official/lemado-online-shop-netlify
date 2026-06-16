@@ -755,3 +755,38 @@ window.addEventListener('load', () => {
     }, 500);
   }
 });
+// 🔄 KIRISH VA RO'YXATDAN O'TISH TABLARINI ALMASHISH FUNKSIYASI
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
+  const modalTitle = document.querySelector('#login-modal h2');
+  const modalNote = document.querySelector('#login-modal .form-note');
+  
+  // Tab tugmalarini topib olamiz
+  const tabs = document.querySelectorAll('#login-modal .tab-btn');
+
+  if (tab === 'login') {
+    // 1. Formani almashtirish
+    if (loginForm) loginForm.style.display = 'block';
+    if (registerForm) registerForm.style.display = 'none';
+    
+    // 2. Sarlavhalarni chiroyli yangilash
+    if (modalTitle) modalTitle.innerText = 'Kirish';
+    if (modalNote) modalNote.innerText = 'Lemado hisobingizga kiring';
+    
+    // 3. Aktiv tugma klassini to'g'rilash
+    tabs.forEach((t, idx) => idx === 0 ? t.classList.add('active') : t.classList.remove('active'));
+    
+  } else if (tab === 'register') {
+    // 1. Formani almashtirish
+    if (loginForm) loginForm.style.display = 'none';
+    if (registerForm) registerForm.style.display = 'block';
+    
+    // 2. Sarlavhalarni chiroyli yangilash
+    if (modalTitle) modalTitle.innerText = "Ro'yxatdan o'tish";
+    if (modalNote) modalNote.innerText = 'Yangi Lemado hisobini yarating';
+    
+    // 3. Aktiv tugma klassini to'g'rilash
+    tabs.forEach((t, idx) => idx === 1 ? t.classList.add('active') : t.classList.remove('active'));
+  }
+}
