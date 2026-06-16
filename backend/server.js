@@ -218,6 +218,24 @@ app.put('/api/admin/stores/:id/verify', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+// Do'kon arizasini rad etish (bazadan o'chirish) yo'lagi
+router.delete('/admin/stores/:id', async (req, res) => {
+  try {
+    const storeId = req.params.id;
+
+    // MongoDB dan do'konni o'chirish
+    const deletedStore = await Store.findByIdAndDelete(storeId);
+
+    if (!deletedStore) {
+      return res.status(404).json({ success: false, message: "Do'kon topilmadi" });
+    }
+
+    res.json({ success: true, message: "Do'kon muvaffaqiyatli o'chirildi" });
+  } catch (error) {
+    console.error("O'chirishda xatolik:", error);
+    res.status(500).json({ success: false, message: "Serverda xatolik yuz berdi" });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server ${PORT}-portda gupirib ishlayapti...`));
