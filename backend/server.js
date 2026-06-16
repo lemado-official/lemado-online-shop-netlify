@@ -237,5 +237,17 @@ app.delete('/api/admin/stores/:id', async (req, res) => {
   }
 });
 
+// Barcha foydalanuvchilarni admin panel uchun olish yo'lagi
+app.get('/api/users', async (req, res) => {
+  try {
+    // MongoDB dan barcha userlarni topamiz, lekin xavfsizlik uchun parollarini (-password) yashiramiz
+    const users = await User.find({}, '-password'); 
+    
+    res.json({ success: true, users: users });
+  } catch (error) {
+    console.error("Foydalanuvchilarni olishda xatolik:", error);
+    res.status(500).json({ success: false, message: "Serverda ichki xatolik" });
+  }
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server ${PORT}-portda gupirib ishlayapti...`));
