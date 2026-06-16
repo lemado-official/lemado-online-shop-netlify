@@ -798,3 +798,26 @@ function openAdminPanel() {
     console.error("showAdmin funksiyasi topilmadi!");
   }
 }
+// 👤 PROFIL AVATARI BOSILGANDA DROPDOWN MENYUNI OCHISH/YOPISH
+function toggleDropdown(event) {
+  if (event) {
+    event.stopPropagation(); // Klik voqeasi "window" ga o'tib, menyuni darhol yopib qo'ymasligi uchun
+  }
+  
+  const profileWrap = document.getElementById('user-profile-wrap');
+  if (profileWrap) {
+    profileWrap.classList.toggle('open');
+  }
+}
+
+// 🌍 EKRANNING IXTIYORIY JOYI BOSILGANDA MENYUNI AVTOMAT YOPISH
+window.addEventListener('click', (event) => {
+  const profileWrap = document.getElementById('user-profile-wrap');
+  
+  // Agar menyu ochiq bo'lsa va bosilgan joy profil elementi ichida bo'lmasa:
+  if (profileWrap && profileWrap.classList.contains('open')) {
+    if (!profileWrap.contains(event.target)) {
+      profileWrap.classList.remove('open');
+    }
+  }
+});
