@@ -744,3 +744,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+// Sahifadagi barcha elementlar va rasm/stillar yuklanib bo'lingach ishlaydi
+window.addEventListener('load', () => {
+  const loadingScreen = document.getElementById('loading-screen');
+  if (loadingScreen) {
+    // Silliq yo'qolishi uchun opacity beramiz va 0.5 soniyadan keyin o'chiramiz
+    loadingScreen.style.opacity = '0';
+    setTimeout(() => {
+      loadingScreen.classList.add('hidden'); // yoki loadingScreen.remove();
+    }, 500);
+  }
+});
