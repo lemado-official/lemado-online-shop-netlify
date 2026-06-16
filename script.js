@@ -687,8 +687,10 @@ function showAdminTab(tab) {
   const el = document.getElementById('admin-tab-' + tab);
   if (el) el.classList.add('active');
   if (event && event.currentTarget) event.currentTarget.classList.add('active');
-  if (tab === 'users') loadAllUsersForAdmin(); // renderUsersTable() o'rniga yuklash funksiyasi qo'yildi
+  
+  if (tab === 'users') loadAllUsersForAdmin(); 
   if (tab === 'stores-admin') loadAllStoresForAdmin();
+  if (tab === 'products') loadAllProductsForAdmin(); // ✨ MANA SHU QATORNI QO'SHING
 }
 
 // Admin uchun barcha foydalanuvchilarni bazadan yuklash
@@ -717,6 +719,8 @@ async function loadAllUsersForAdmin() {
     renderUsersTable([]);
   }
 }
+
+
 
 function renderUsersTable(users) {
   const t = document.getElementById('users-table');
