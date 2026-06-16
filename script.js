@@ -790,3 +790,11 @@ function switchAuthTab(tab) {
     tabs.forEach((t, idx) => idx === 1 ? t.classList.add('active') : t.classList.remove('active'));
   }
 }
+// HTML dagi Admin Panel tugmasi bosilganda ishlovchi ko'prik funksiya
+function openAdminPanel() {
+  if (typeof showAdmin === 'function') {
+    showAdmin(true); // Sizning kodingizdagi original admin panel funksiyasi
+  } else {
+    console.error("showAdmin funksiyasi topilmadi!");
+  }
+}
