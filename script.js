@@ -657,7 +657,16 @@ function showAdminTab(tab) {
 // Admin uchun barcha foydalanuvchilarni bazadan yuklash
 async function loadAllUsersForAdmin() {
   try {
-    const res = await fetch(`${API_URL}/users`); // Agar maxsus yo'lak bo'lsa `/admin/users` qilinadi
+    const res = await fetch(`${API_URL}/users`);
+    
+    // Serverdan HTML xatolik kelsa, JSON parse xatosi bermasligi uchun tekshiramiz
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Backenddan xato keldi:", errorText);
+      renderUsersTable([]); // Xato bo'lsa bo'sh jadval yoki faqat adminni chiqaradi
+      return;
+    }
+
     const data = await res.json();
     
     let usersList = [];
@@ -668,7 +677,6 @@ async function loadAllUsersForAdmin() {
     renderUsersTable(usersList);
   } catch (err) {
     console.error("Foydalanuvchilarni yuklashda xatolik:", err);
-    // Xatolik bo'lsa hech bo'lmasa joriy adminni ko'rsatib turadi
     renderUsersTable([]);
   }
 }
