@@ -12,7 +12,7 @@
 <!-- LOADING SCREEN -->
 <div id="loading-screen">
   <div class="logo-big">Lemado<span>.</span></div>
-  <div class="tagline">Xavfsiz va Tezkor Tizim</div>
+  <div class="tagline">Lemado</div>
   
   <!-- Yangi Suyuqlik Effekti -->
   <div class="liquid-container">
@@ -27,7 +27,7 @@
   <img class="music-thumb" src="https://i.imgur.com/7bwJ4Jg.png" alt="music" onerror="this.style.display='none'">
   <div class="music-info">
     <div class="music-name">Lemado Vibes</div>
-    <div class="music-artist">Ambient Mix Vol.1</div>
+    <div class="music-artist">Lemado</div>
   </div>
   <input type="range" id="music-volume" min="0" max="1" step="0.1" value="0.5" title="Volume">
   <button class="play-btn" id="play-btn" onclick="toggleMusic()">▶</button>
@@ -142,7 +142,7 @@
       <input type="url" id="store-logo-url" placeholder="https://...">
     </div>
     <div style="background:var(--red-light);border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:var(--red-dark)">
-      ℹ️ Do'kon yaratgandan so'ng admin tomonidan tekshiriladi. Tasdiqlangandan keyin "✓ Rasmiy" belgisi beriladi.
+      ℹ️ Do'kon tasdiqlangandan keyin "✓ Rasmiy" belgisi beriladi.
     </div>
     <button class="btn btn-red" style="width:100%;padding:13px" onclick="createStore()">Do'kon yaratish 🚀</button>
   </div>
@@ -222,8 +222,8 @@
   <!-- HOME PAGE -->
   <div id="page-home">
     <div class="hero">
-      <h1>O'zbek Online Bozori</h1>
-      <p>Minglab mahsulotlar, ishonchli do'konlar, qulay narxlar</p>
+      <h1>Lemado</h1>
+      <p>Minglab mahsulotlar, ishonchli do'kon va zavodlar, qulay narxlar</p>
       <div class="hero-cta">
         <button class="btn" style="background:white;color:var(--red-dark);font-size:16px;padding:14px 28px" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">Xarid qilish 🛒</button>
         <button class="btn" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.4);font-size:16px;padding:14px 28px" onclick="openStoreCreation()">Do'kon ochish 🏪</button>
@@ -234,27 +234,27 @@
       <div class="create-store-banner">
         <div>
           <h3>O'z biznesingizni boshlang!</h3>
-          <p>Do'kon oching, brendingizni yarating, mahsulotlaringizni soting</p>
+          <p>Do'kon oching, brendingizni yarating, mahsulotlaringizni soting!</p>
         </div>
         <button class="btn" style="background:white;color:var(--blue-dark);font-size:15px;padding:12px 24px;flex-shrink:0" onclick="openStoreCreation()">Boshlash →</button>
       </div>
 
       <div class="section" id="products-section">
-        <div class="section-title">🔥 Mahsulotlar <span class="badge">YANGI</span></div>
+        <div class="section-title">Mahsulotlar <span class="badge">YANGI</span></div>
         <div class="chips" id="category-chips">
           <div class="chip active" onclick="filterCategory('Barchasi',this)">Barchasi</div>
-          <div class="chip" onclick="filterCategory('Elektronika',this)">📱 Elektronika</div>
-          <div class="chip" onclick="filterCategory('Kiyim-kechak',this)">👔 Kiyim</div>
-          <div class="chip" onclick="filterCategory('Oziq-ovqat',this)">🍎 Oziq-ovqat</div>
-          <div class="chip" onclick="filterCategory('Kosmetika',this)">💄 Kosmetika</div>
-          <div class="chip" onclick="filterCategory('Sport',this)">⚽ Sport</div>
-          <div class="chip" onclick="filterCategory('Kitoblar',this)">📚 Kitoblar</div>
+          <div class="chip" onclick="filterCategory('Elektronika',this)">Elektronika</div>
+          <div class="chip" onclick="filterCategory('Kiyim-kechak',this)">Kiyim</div>
+          <div class="chip" onclick="filterCategory('Oziq-ovqat',this)">Oziq-ovqat</div>
+          <div class="chip" onclick="filterCategory('Kosmetika',this)">Kosmetika</div>
+          <div class="chip" onclick="filterCategory('Sport',this)">Sport</div>
+          <div class="chip" onclick="filterCategory('Kitoblar',this)">Kitoblar</div>
         </div>
         <div class="products-grid" id="products-grid"></div>
       </div>
 
       <div class="section">
-        <div class="section-title">🏪 Rasmiy Do'konlar</div>
+        <div class="section-title">Rasmiy Do'konlar</div>
         <div class="stores-grid" id="stores-grid-home"></div>
       </div>
     </div>
@@ -263,7 +263,7 @@
   <!-- STORES PAGE -->
   <div id="page-stores" style="display:none" class="container" style="padding-top:40px">
     <div class="section">
-      <div class="section-title">🏪 Barcha Do'konlar</div>
+      <div class="section-title">Barcha Do'konlar</div>
       <div class="stores-grid" id="all-stores-grid"></div>
     </div>
   </div>
@@ -297,7 +297,7 @@
 <div id="admin-panel">
   <div class="admin-layout">
     <div class="admin-sidebar">
-      <div class="admin-logo">⚡ Lemado <span style="color:var(--red)">Admin</span></div>
+      <div class="admin-logo">Lemado <span style="color:var(--red)">Admin</span></div>
       <div class="admin-nav">
         <div class="admin-nav-item active" onclick="showAdminTab('dashboard')">📊 Dashboard</div>
         <div class="admin-nav-item" onclick="showAdminTab('users')">👥 Foydalanuvchilar</div>
