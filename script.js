@@ -284,11 +284,14 @@ async function showAdmin(show = true) {
   }
   document.getElementById('admin-panel').style.display = show ? 'block' : 'none';
   document.getElementById('main-site').style.display = show ? 'none' : 'block';
-  if (show) {
-    updateAdminStats();
-    await loadAllStoresForAdmin(); // Admin kirganda barcha tasdiqlanmagan do'konlarni tortadi
-    document.getElementById('admin-welcome').textContent = '👤 ' + currentUser.username;
-  }
+  
+    if (show) {
+  updateAdminStats();
+  await loadAllStoresForAdmin();
+  await loadAllUsersForAdmin(); // Mana shu qatorni ham qo'shib qo'ying
+  document.getElementById('admin-welcome').textContent = '👤 ' + currentUser.username;
+}
+  
 }
 
 function exitAdmin() { showAdmin(false); showPage('home'); }
@@ -748,6 +751,29 @@ async function verifyStore(id) {
     }
   } catch (err) {
     showToast('Do\'konni tasdiqlashda xatolik yuz berdi.');
+  }
+}
+
+async function rejectStore(id) {
+  if (!confirm("Haqiqatdan ham ushbu do'kon arizasini rad etmoqchimisiz yoki o'chirmoqchimisiz?")) return;
+  try {
+    // Backend arxitekturangizga mos ravishda DELETE yoki PUT ishlatiladi
+    const res = await fetch(`${API_URL}/admin/stores/${id}/reject`, { 
+      method: 'DELETE' 
+    });
+    const data = await res.json();
+    
+    if (data.success || res.ok) {
+      showToast('✕ Do\'kon muvaffaqiyatli rad etildi/o\'chirildi!');
+      await loadServerData();
+      await loadAllStoresForAdmin();
+      await updateAdminStats();
+    } else {
+      showToast(data.message || 'Xatolik yuz berdi.');
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('Do\'konni rad etishda server bilan aloqa uzildi.');
   }
 }
 
