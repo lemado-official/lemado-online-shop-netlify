@@ -346,3 +346,82 @@ footer .footer-logo span { color: var(--red); }
 .hidden {
   display: none !important;
 }
+/* ==========================================
+   LEMADO PROFIL DROPDOWN & AVATAR STİLLARİ
+========================================== */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dumaloq chiroyli avatar */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #ff4a4a; /* Lemado qizil rangi */
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 74, 74, 0.2);
+  user-select: none;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  border-color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 74, 74, 0.5);
+}
+
+/* Yashirin dropdown menyu foni va joylashuvi */
+.dropdown-menu {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  background: #141414; /* To'q fon, navbar bilan mos */
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  min-width: 180px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  display: none; /* Boshida yashirin */
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* JS orqali .open klassi qo'shilganda menyuni ko'rsatish */
+.dropdown.open .dropdown-menu {
+  display: block;
+  animation: profileFadeIn 0.2s ease-out;
+}
+
+/* Dropdown ichidagi har bir qator (Tugmalar) */
+.dropdown-item {
+  padding: 12px 16px;
+  color: #cccccc;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  border-bottom: 1px solid #1f1f1f;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background: #222222;
+  color: #ffffff;
+}
+
+/* Silliq paydo bo'lish animatsiyasi */
+@keyframes profileFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
