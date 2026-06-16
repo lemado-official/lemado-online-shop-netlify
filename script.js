@@ -660,20 +660,33 @@ function renderUsersTable() {
 function renderStoresTable() {
   const t = document.getElementById('stores-table');
   if (!t) return;
+  
+  if (!STORES || STORES.length === 0) {
+    t.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-400)">Hozircha do'konlar mavjud emas</td></tr>`;
+    return;
+  }
+
   t.innerHTML = STORES.map(s => {
     const sId = s._id || s.id;
     return `<tr>
       <td><strong>${sanitize(s.name)}</strong></td>
-      <td>${sanitize(s.owner)}</td>
-      <td>${sanitize(s.category)}</td>
+      <td>${sanitize(s.owner || 'Noma\'lum')}</td>
+      <td>${sanitize(s.category || 'Umumiy')}</td>
       <td><span class="tag ${s.isVerified ? 'tag-green' : 'tag-orange'}">${s.isVerified ? 'Faol' : 'Kutilmoqda'}</span></td>
       <td>
-        ${!s.isVerified ? `<button class="action-btn approve" onclick="verifyStore('${sId}')">✓ Tasdiqlash</button>` : '<span style="font-size:12px;color:var(--gray-500)">Tasdiqlangan</span>'}
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          ${!s.isVerified ? `
+            <button class="action-btn approve" style="background:var(--blue); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;" onclick="verifyStore('${sId}')">✓ Tasdiqlash</button>
+            <button class="action-btn reject" style="background:var(--red); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;" onclick="rejectStore('${sId}')">✕ Rad etish</button>
+          ` : `
+            <span style="font-size:12px;color:var(--gray-500); padding: 6px 0;">Tasdiqlangan</span>
+            <button class="action-btn reject" style="background:var(--red-light); color:var(--red); border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:11px; margin-left:10px;" onclick="rejectStore('${sId}')">O'chirish</button>
+          `}
+        </div>
       </td>
     </tr>`;
   }).join('');
 }
-
 async function verifyStore(id) {
   try {
     const res = await fetch(`${API_URL}/admin/stores/${id}/verify`, { method: 'PUT' });
