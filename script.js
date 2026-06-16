@@ -313,16 +313,13 @@ async function showAdmin(show = true) {
   document.getElementById('admin-panel').style.display = show ? 'block' : 'none';
   document.getElementById('main-site').style.display = show ? 'none' : 'block';
   
-  if (show) {
+ if (show) {
     updateAdminStats();
     await loadAllStoresForAdmin();
-    await loadAllUsersForAdmin(); 
-    await loadAllProductsForAdmin(); // ✨ BU YERGA HAM QO'SHIB QO'YING
-    document.getElementById('admin-welcome').textContent = '👤 ' + currentUser.username;
+    await loadAllUsersForAdmin();
+    await loadAllProductsForAdmin(); // 👈 BU QATOR QO'SHILGAN BO'LISHI KERAK
   }
 }
-  
-
 
 function exitAdmin() { showAdmin(false); showPage('home'); }
 
