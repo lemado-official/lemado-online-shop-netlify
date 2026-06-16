@@ -249,5 +249,20 @@ app.get('/api/users', async (req, res) => {
     res.status(500).json({ success: false, message: "Serverda ichki xatolik" });
   }
 });
+
+// Barcha mahsulotlarni admin panel uchun olish yo'lagi
+app.get('/api/products', async (req, res) => {
+  try {
+    // MongoDB dan barcha mahsulotlarni olamiz
+    const products = await Product.find({}); 
+    
+    res.json({ success: true, products: products });
+  } catch (error) {
+    console.error("Mahsulotlarni olishda xatolik:", error);
+    res.status(500).json({ success: false, message: "Serverda ichki xatolik yuz berdi" });
+  }
+});
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server ${PORT}-portda gupirib ishlayapti...`));
