@@ -1,12 +1,8 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    // Asosiy kodlar shu yerga
-   
 // ==========================================
 // CONFIG & INITIALIZATION
 // ==========================================
 const API_URL = "https://lemado-online-shop-render.onrender.com/api";
 
-// Barcha asosiy funksiyalar va o'zgaruvchilar shu yerda bo'ladi
 let PRODUCTS = []; 
 let STORES = [];   
 let ORDERS = [];   
@@ -14,18 +10,37 @@ let currentUser = null;
 let currentPage = 'home';
 let cart = [];
 
+// Kodni faqat bitta 'load' hodisasi bilan ishga tushiramiz
 window.addEventListener('load', async () => {
-    // 1. Birinchi navbatda serverni uyg'otishga harakat qilamiz
+    console.log("Sahifa to'liq yuklandi, ishga tushirilyapti...");
+
+    // 1. Ma'lumotlarni serverdan yuklash
     await loadServerData();
 
-    // 2. Loadingni yopish (server javob bergach yoki vaqt tugagach)
+    // 2. Loading ekranni yopish
     const ls = document.getElementById('loading-screen');
     if (ls) {
         ls.style.opacity = '0';
-        setTimeout(() => { ls.style.display = 'none'; }, 500);
+        setTimeout(() => { 
+            ls.style.display = 'none'; 
+        }, 500);
     }
 });
 
+// Serverdan ma'lumot olish funksiyasi (try-catch bilan xavfsiz qilingan)
+async function loadServerData() {
+    try {
+        const response = await fetch(`${API_URL}/products`);
+        if (!response.ok) throw new Error("Serverdan javob kelmadi");
+        const data = await response.json();
+        
+        // Ma'lumotlarni o'zgaruvchilarga yozib olish
+        PRODUCTS = data.products || data; 
+        console.log("Ma'lumotlar muvaffaqiyatli yuklandi!");
+    } catch (err) {
+        console.error("Yuklashda xatolik:", err);
+    }
+}
 // TO'G'RI:
 window.addEventListener('load', async () => {
     await loadServerData(); // Endi ishlaydi!
@@ -1061,11 +1076,11 @@ setTimeout(() => {
     }
 }, 2000);
 
+// 1. Serverdan ma'lumot olish funksiyasi (Siz yozgan kodni to'g'riladik)
 async function loadServerData() {
     try {
-        // Server uyg'onishini kutish uchun timeoutni oshiramiz
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 soniya kutamiz
+        const timeoutId = setTimeout(() => controller.abort(), 25000); 
 
         const response = await fetch(`${API_URL}/products`, { signal: controller.signal });
         clearTimeout(timeoutId);
@@ -1073,31 +1088,33 @@ async function loadServerData() {
         if (!response.ok) throw new Error("Serverdan ma'lumot kelmadi");
         
         const data = await response.json();
-        PRODUCTS = data.products; // Ma'lumotlarni o'zlashtirish
+        // Ma'lumotni saqlash (data.products yoki to'g'ridan-to'g'ri data)
+        PRODUCTS = data.products || data; 
         console.log("Ma'lumotlar muvaffaqiyatli yuklandi!");
-        
+        return true; // Muvaffaqiyatli yuklandi
     } catch (error) {
-        console.warn("Server uxlab qolgan bo'lishi mumkin:", error.message);
-        // Server uxlayotgan bo'lsa, foydalanuvchiga xabar berishimiz mumkin
+        console.warn("Server xatosi:", error.message);
+        return false; // Yuklanmadi
     }
 }
 
+// 2. Loading-ni yopuvchi funksiya
+function hideLoading() {
+    const ls = document.getElementById('loading-screen');
+    if (ls) {
+        ls.style.opacity = '0';
+        setTimeout(() => { ls.style.display = 'none'; }, 500);
+    }
+}
 
-// Sahifa yuklanishi bilan admin ma'lumotlarini olishni boshlash
-window.addEventListener('load', () => {
-    loadAdminData();
-});
-
-
-
-
-
-
-
-
-//kodlar
- console.log("Sahifa yuklandi.");
+// 3. ASOSIY ISHGA TUSHIRUVCHI QISM (Xatosiz variant)
+window.addEventListener('load', async () => {
+    console.log("Sahifa yuklandi.");
+    
+    // Serverdan ma'lumotlarni kutamiz
     await loadServerData();
+    
+    // Ma'lumotlar kelsin yoki kelmasin, loadingni yopamiz
     hideLoading();
 });
-                          
+
