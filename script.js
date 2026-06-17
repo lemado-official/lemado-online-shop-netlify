@@ -990,3 +990,16 @@ window.addEventListener('click', (event) => {
     }
   }
 });
+
+// LOADING EKRANINI YASHIRISH UCHUN XAVFSIZ FUNKSIYA
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('loading-screen');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 500); // 0.5 soniyadan keyin butunlay o'chadi
+    }
+  }, 1000); // 1 soniyadan keyin (hatto xatolik bo'lsa ham) ekran ochiladi
+});
