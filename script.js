@@ -23,8 +23,10 @@ window.addEventListener('load', async () => {
     }
 });
 
-  // 2. Serverdan ma'lumotlarni yuklash
-  await loadServerData();
+// TO'G'RI:
+window.addEventListener('load', async () => {
+    await loadServerData(); // Endi ishlaydi!
+});
 
   // 3. Loading ekranni yopish
   const ls = document.getElementById('loading-screen');
