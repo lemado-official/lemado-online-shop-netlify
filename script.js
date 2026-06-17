@@ -93,7 +93,17 @@ async function loadAllProductsForAdmin() {
   }
 }
 
-    const data = await res.json();
+   // TO'G'RI:
+async function initApp() {
+    try {
+        const res = await fetch(`${API_URL}/products`);
+        const data = await res.json();
+        // ... boshqa ishlar
+    } catch (e) {
+        console.error(e);
+    }
+}
+initApp(); // <--- Funksiyani chaqirish shart
     
     let productsList = [];
     if (data.success && data.products) productsList = data.products;
@@ -991,15 +1001,13 @@ window.addEventListener('click', (event) => {
   }
 });
 
-// LOADING EKRANINI YASHIRISH UCHUN XAVFSIZ FUNKSIYA
-window.addEventListener('load', () => {
-  setTimeout(() => {
+
+
+// 2 soniyadan keyin loadingni majburan yopish
+setTimeout(() => {
     const loader = document.getElementById('loading-screen');
     if (loader) {
-      loader.style.opacity = '0';
-      setTimeout(() => {
         loader.style.display = 'none';
-      }, 500); // 0.5 soniyadan keyin butunlay o'chadi
+        console.log("Loading majburan yopildi.");
     }
-  }, 1000); // 1 soniyadan keyin (hatto xatolik bo'lsa ham) ekran ochiladi
-});
+}, 2000);
