@@ -1083,7 +1083,10 @@ async function loadServerData() {
 }
 
 
-
+// Sahifa yuklanishi bilan admin ma'lumotlarini olishni boshlash
+window.addEventListener('load', () => {
+    loadAdminData();
+});
 
 
 
