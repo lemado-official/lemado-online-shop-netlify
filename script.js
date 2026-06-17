@@ -1,3 +1,6 @@
+document.addEventListener('DOMContentLoaded', async () => {
+    // Asosiy kodlar shu yerga
+   
 // ==========================================
 // CONFIG & INITIALIZATION
 // ==========================================
@@ -1061,3 +1064,20 @@ async function loadServerData() {
         // Server uxlayotgan bo'lsa, foydalanuvchiga xabar berishimiz mumkin
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+//kodlar
+ console.log("Sahifa yuklandi.");
+    await loadServerData();
+    hideLoading();
+});
+                          
