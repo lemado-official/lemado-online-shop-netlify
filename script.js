@@ -1,16 +1,38 @@
 // ==========================================
-// CONFIG & CONFIGURATION
+// CONFIG & INITIALIZATION
 // ==========================================
 const API_URL = "https://lemado-online-shop-render.onrender.com/api";
 
-let currentUser = null;
-let cart = [];
-let currentPage = 'home';
-let currentFilter = 'Barchasi';
-
+// Barcha asosiy funksiyalar va o'zgaruvchilar shu yerda bo'ladi
 let PRODUCTS = []; 
 let STORES = [];   
 let ORDERS = [];   
+let currentUser = null;
+let currentPage = 'home';
+let cart = [];
+
+// Sahifa yuklanganda hamma narsani bir marta ishga tushirish
+window.addEventListener('load', async () => {
+  // 1. Foydalanuvchini tekshirish
+  const savedUser = localStorage.getItem('lemado_user');
+  if (savedUser) {
+    try {
+      setCurrentUser(JSON.parse(savedUser));
+    } catch (e) {
+      localStorage.removeItem('lemado_user');
+    }
+  }
+
+  // 2. Serverdan ma'lumotlarni yuklash
+  await loadServerData();
+
+  // 3. Loading ekranni yopish
+  const ls = document.getElementById('loading-screen');
+  if (ls) {
+    ls.style.opacity = '0';
+    setTimeout(() => { ls.style.display = 'none'; }, 500);
+  }
+});
 
 const blockedUsernames = new Set(['admin_fake', 'lemado_admin', 'root', 'system']);
 
@@ -695,13 +717,18 @@ async function updateAdminStats() {
 function showAdminTab(tab) {
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+  
+  // HTMLdagi IDlar bilan moslash
   const el = document.getElementById('admin-tab-' + tab);
   if (el) el.classList.add('active');
+  
+  // Tabni faollashtirish
   if (event && event.currentTarget) event.currentTarget.classList.add('active');
   
+  // Ma'lumotlarni yuklash
   if (tab === 'users') loadAllUsersForAdmin(); 
   if (tab === 'stores-admin') loadAllStoresForAdmin();
-  if (tab === 'products') loadAllProductsForAdmin(); // ✨ MANA SHU QATORNI QO'SHING
+  if (tab === 'products-admin') loadAllProductsForAdmin(); 
 }
 
 // Admin uchun barcha foydalanuvchilarni bazadan yuklash
