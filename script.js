@@ -33,7 +33,7 @@ window.addEventListener('load', async () => {
   if (ls) {
     ls.style.opacity = '0';
     setTimeout(() => { ls.style.display = 'none'; }, 500);
-  }
+  
 });
 
 const blockedUsernames = new Set(['admin_fake', 'lemado_admin', 'root', 'system']);
