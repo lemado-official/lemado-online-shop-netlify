@@ -128,31 +128,40 @@ async function loadAllProductsForAdmin() {
   }
 }
 
-   // TO'G'RI:
-async function initApp() {
+ // 1. Asosiy funksiya: Serverdan ma'lumotlarni yuklash
+async function loadAdminData() {
+    const loader = document.getElementById('loading-screen');
     try {
+        console.log("Ma'lumotlar yuklanyapti...");
+        
         const res = await fetch(`${API_URL}/products`);
         const data = await res.json();
-        // ... boshqa ishlar
-    } catch (e) {
-        console.error(e);
+
+        // 2. Ma'lumotlarni saralash (turli formatlar uchun)
+        let productsList = [];
+        if (data.success && data.products) productsList = data.products;
+        else if (Array.isArray(data)) productsList = data;
+        else if (data.data) productsList = data.data;
+
+        // 3. Jadvalni chizish
+        renderAdminProductsTable(productsList);
+
+    } catch (err) {
+        console.error("Mahsulotlarni yuklashda xatolik:", err);
+        renderAdminProductsTable([]); // Xatolik bo'lsa bo'sh jadval
+    } finally {
+        // LOADING NI YOPISH (Har qanday holatda ishlaydi)
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 500);
+        }
     }
 }
-initApp(); // <--- Funksiyani chaqirish shart
-    
-    let productsList = [];
-    if (data.success && data.products) productsList = data.products;
-    else if (Array.isArray(data)) productsList = data;
-    else if (data.data) productsList = data.data;
 
-    // Mahsulotlar jadvalini chizadigan funksiya (nomini o'zingiznikiga moslang)
-    renderAdminProductsTable(productsList);
-  } catch (err) {
-    console.error("Mahsulotlarni yuklashda xatolik:", err);
-    renderAdminProductsTable([]);
-  }
-}
-
+// 4. Sahifa yuklanganda ishga tushirish
+window.addEventListener('load', () => {
+    loadAdminData();
+});
 // ==========================================
 // GLOBAL STATE (Tizimning umumiy holati)
 // ==========================================
