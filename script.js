@@ -35,9 +35,12 @@ window.addEventListener('load', async () => {
   const ls = document.getElementById('loading-screen');
   if (ls) {
     ls.style.opacity = '0';
-    setTimeout(() => { ls.style.display = 'none'; }, 500);
-  
-});
+    setTimeout(() => { 
+        ls.style.display = 'none'; 
+    }, 500);
+  }
+} // <--- Bu qavs window.addEventListener ni yopadi
+); // <--- Bu qavs va nuqtali vergul addEventListener ning yakuni
 
 const blockedUsernames = new Set(['admin_fake', 'lemado_admin', 'root', 'system']);
 
