@@ -94,6 +94,11 @@ async function loadServerData() {
   }
 }
 
+// loadServerData() ichida yoki undan keyin:
+if (isServerSleeping) {
+    document.querySelector('.tagline').innerText = "Server uyg'onmoqda, ozgina kuting...";
+}
+
 // Admin hamma do'konlarni (tasdiqlanmaganlarini ham) ko'ra olishi uchun alohida funksiya
 async function loadAllStoresForAdmin() {
   try {
