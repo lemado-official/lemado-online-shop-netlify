@@ -11,17 +11,17 @@ let currentUser = null;
 let currentPage = 'home';
 let cart = [];
 
-// Sahifa yuklanganda hamma narsani bir marta ishga tushirish
 window.addEventListener('load', async () => {
-  // 1. Foydalanuvchini tekshirish
-  const savedUser = localStorage.getItem('lemado_user');
-  if (savedUser) {
-    try {
-      setCurrentUser(JSON.parse(savedUser));
-    } catch (e) {
-      localStorage.removeItem('lemado_user');
+    // 1. Birinchi navbatda serverni uyg'otishga harakat qilamiz
+    await loadServerData();
+
+    // 2. Loadingni yopish (server javob bergach yoki vaqt tugagach)
+    const ls = document.getElementById('loading-screen');
+    if (ls) {
+        ls.style.opacity = '0';
+        setTimeout(() => { ls.style.display = 'none'; }, 500);
     }
-  }
+});
 
   // 2. Serverdan ma'lumotlarni yuklash
   await loadServerData();
@@ -1039,24 +1039,23 @@ setTimeout(() => {
     }
 }, 2000);
 
-// Kodning oxiriga shu funksiyani qo'shing:
-async function initApp() {
-  try {
-    console.log("Ma'lumotlar yuklanyapti...");
-    await loadAllStoresForAdmin();
-    await loadAllProductsForAdmin();
-    await loadAllOrdersForAdmin();
-    
-    // Yuklangandan so'ng loading-ni yashiramiz
-    const loader = document.getElementById('loading-screen');
-    if (loader) loader.style.display = 'none';
-  } catch (err) {
-    console.error("Yuklashda xatolik:", err);
-    // Xato bo'lsa ham loadingni yopish kerak
-    const loader = document.getElementById('loading-screen');
-    if (loader) loader.style.display = 'none';
-  }
-}
+async function loadServerData() {
+    try {
+        // Server uyg'onishini kutish uchun timeoutni oshiramiz
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 soniya kutamiz
 
-// Sahifa yuklangach, funksiyani ishga tushiramiz
-window.addEventListener('DOMContentLoaded', initApp);
+        const response = await fetch(`${API_URL}/products`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) throw new Error("Serverdan ma'lumot kelmadi");
+        
+        const data = await response.json();
+        PRODUCTS = data.products; // Ma'lumotlarni o'zlashtirish
+        console.log("Ma'lumotlar muvaffaqiyatli yuklandi!");
+        
+    } catch (error) {
+        console.warn("Server uxlab qolgan bo'lishi mumkin:", error.message);
+        // Server uxlayotgan bo'lsa, foydalanuvchiga xabar berishimiz mumkin
+    }
+}
