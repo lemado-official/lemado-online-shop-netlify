@@ -112,22 +112,31 @@ function rateLimitCheck(action) {
 // SERVERDAN MA'LUMOTLARNI YUKLASH (FETCH)
 // ==========================================
 async function loadServerData() {
-  try {
-    const prodRes = await fetch(`${API_URL}/products`);
-    const prodData = await prodRes.json();
-    if (prodData.success) PRODUCTS = prodData.products;
+    const tagline = document.querySelector('.tagline');
+    
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+            isServerSleeping = true; // Server javob bermadi, demak "uxlayapti"
+            if (tagline) tagline.innerText = "Server uyg'onmoqda, ozgina kuting...";
+            controller.abort();
+        }, 10000); // 10 soniya kutamiz
 
-    // Oddiy foydalanuvchilar uchun faqat tasdiqlangan do'konlar
-    const storeRes = await fetch(`${API_URL}/stores`);
-    const storeData = await storeRes.json();
-    if (storeData.success) STORES = storeData.stores;
+        const response = await fetch(`${API_URL}/products`, { signal: controller.signal });
+        clearTimeout(timeoutId);
 
-    filterCategory(currentFilter, document.querySelector('.chip.active'));
-    renderStoresHome();
-  } catch (err) {
-    console.error("Serverdan ma'lumot yuklashda xatolik:", err);
-    showToast("Ma'lumotlarni yuklashda xatolik yuz berdi!");
-  }
+        if (!response.ok) throw new Error("Server xatosi");
+        
+        const data = await response.json();
+        PRODUCTS = data.products || data;
+        
+        // Muvaffaqiyatli yuklandi
+        isServerSleeping = false; 
+        if (tagline) tagline.innerText = "Xush kelibsiz!";
+        
+    } catch (error) {
+        console.warn("Server bilan muammo:", error.message);
+    }
 }
 
 // loadServerData() ichida yoki undan keyin:
@@ -832,6 +841,7 @@ function renderUsersTable(users) {
     <td><span style="color:var(--gray-400);font-size:12px">Boshqaruvchi</span></td>
   </tr>`;
 
+  let isServerSleeping = false; // Boshlang'ich holat
   // Qolgan bazadan kelgan userlarni massiv bo'yicha aylantiramiz
   if (users && users.length > 0) {
     users.forEach(u => {
