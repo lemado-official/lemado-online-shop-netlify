@@ -1011,3 +1011,25 @@ setTimeout(() => {
         console.log("Loading majburan yopildi.");
     }
 }, 2000);
+
+// Kodning oxiriga shu funksiyani qo'shing:
+async function initApp() {
+  try {
+    console.log("Ma'lumotlar yuklanyapti...");
+    await loadAllStoresForAdmin();
+    await loadAllProductsForAdmin();
+    await loadAllOrdersForAdmin();
+    
+    // Yuklangandan so'ng loading-ni yashiramiz
+    const loader = document.getElementById('loading-screen');
+    if (loader) loader.style.display = 'none';
+  } catch (err) {
+    console.error("Yuklashda xatolik:", err);
+    // Xato bo'lsa ham loadingni yopish kerak
+    const loader = document.getElementById('loading-screen');
+    if (loader) loader.style.display = 'none';
+  }
+}
+
+// Sahifa yuklangach, funksiyani ishga tushiramiz
+window.addEventListener('DOMContentLoaded', initApp);
