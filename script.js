@@ -41,21 +41,42 @@ async function loadServerData() {
         console.error("Yuklashda xatolik:", err);
     }
 }
-// TO'G'RI:
+// ==========================================================
+// BARCHA KODNI SHU QOLIBGA SOLING (Bu xatolarni yo'q qiladi)
+// ==========================================================
+
 window.addEventListener('load', async () => {
-    await loadServerData(); // Endi ishlaydi!
+    console.log("Sahifa yuklandi, server ma'lumotlari kutilmoqda...");
+
+    // 1. Serverdan ma'lumotlarni yuklash (await bilan)
+    await loadServerData();
+
+    // 2. Loading ekranni yopish
+    const ls = document.getElementById('loading-screen');
+    if (ls) {
+        ls.style.opacity = '0';
+        setTimeout(() => { 
+            ls.style.display = 'none'; 
+        }, 500);
+    }
+    console.log("Loading muvaffaqiyatli yopildi.");
 });
 
-  // 3. Loading ekranni yopish
-  const ls = document.getElementById('loading-screen');
-  if (ls) {
-    ls.style.opacity = '0';
-    setTimeout(() => { 
-        ls.style.display = 'none'; 
-    }, 500);
-  }
-} // <--- Bu qavs window.addEventListener ni yopadi
-); // <--- Bu qavs va nuqtali vergul addEventListener ning yakuni
+// 3. Serverdan ma'lumot olish funksiyasi (Alohida joylashgan)
+async function loadServerData() {
+    try {
+        const response = await fetch(`${API_URL}/products`);
+        if (!response.ok) throw new Error("Server xatosi");
+        const data = await response.json();
+        
+        // Agar sizda render funksiyasi bo'lsa, uni shu yerda chaqiring
+        if (typeof renderAdminProductsTable === 'function') {
+            renderAdminProductsTable(data.products || data);
+        }
+    } catch (err) {
+        console.error("Serverdan ma'lumot olishda xatolik:", err);
+    }
+}
 
 const blockedUsernames = new Set(['admin_fake', 'lemado_admin', 'root', 'system']);
 
