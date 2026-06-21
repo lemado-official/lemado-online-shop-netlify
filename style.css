@@ -43,68 +43,6 @@ body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: var(
 
 
 
-/* 🧪 KUCHLI LIQUID (SUYUQLIK) EFFEKTI */
-.liquid-container {
-  position: relative;
-  width: 140px;
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: blur(10px) contrast(15); /* Suyuqliklar bir-biriga qo'shilishi uchun maxsus effekt */
-  background: var(--gray-900);
-}
-
-.liquid-blob {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  mix-blend-mode: screen;
-}
-
-.liquid-blob.blue {
-  background: var(--blue);
-  animation: moveBlue 3s infinite ease-in-out;
-}
-
-.liquid-blob.red {
-  background: var(--red);
-  animation: moveRed 3s infinite ease-in-out;
-}
-
-/* Suyuqlik ustidagi neon yorg'ulik */
-.liquid-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  box-shadow: inset 0 0 20px rgba(255,255,255,0.1);
-  pointer-events: none;
-}
-
-/* Suyuqlik harakati animatsiyalari */
-@keyframes moveBlue {
-  0%, 100% {
-    transform: translateX(-25px) translateY(0) scale(1);
-    border-radius: 45% 55% 40% 60% / 50% 40% 60% 50%;
-  }
-  50% {
-    transform: translateX(25px) translateY(-10px) scale(1.2);
-    border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%;
-  }
-}
-
-@keyframes moveRed {
-  0%, 100% {
-    transform: translateX(25px) translateY(0) scale(1.1);
-    border-radius: 55% 45% 60% 40% / 40% 50% 50% 60%;
-  }
-  50% {
-    transform: translateX(-25px) translateY(10px) scale(0.9);
-    border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%;
-  }
-}
 
 /* MUSIC PLAYER */
 #music-player {
