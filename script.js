@@ -10,23 +10,27 @@ let currentUser = null;
 let currentPage = 'home';
 let cart = [];
 
-// Kodni faqat bitta 'load' hodisasi bilan ishga tushiramiz
-window.addEventListener('load', async () => {
-    console.log("Sahifa to'liq yuklandi, ishga tushirilyapti...");
+// ----------------------------------------------------
+// 1. DARHOL TEKSHIRUV (Hech narsani kutmasdan ishlaydi!)
+// ----------------------------------------------------
+const savedData = localStorage.getItem('lemado_user');
+if (savedData && savedData !== "undefined") {
+    try {
+        currentUser = JSON.parse(savedData);
+        console.log("Xotiradan o'qildi:", currentUser.username);
+    } catch (e) {
+        console.error("Xotiradagi ma'lumot buzilgan, tozalanmoqda...");
+        localStorage.removeItem('lemado_user');
+    }
+}
 
-    // 1. Ma'lumotlarni serverdan yuklash
-    await loadServerData();
-
-    // 2. Loading ekranni yopish
-    const ls = document.getElementById('loading-screen');
-    if (ls) {
-        ls.style.opacity = '0';
-        setTimeout(() => { 
-            ls.style.display = 'none'; 
-        }, 500);
+// 2. HTML ELEMENTLAR TAYYOR BO'LGACH, UI (Dizayn) NI YANGILASH
+window.addEventListener('DOMContentLoaded', () => {
+    if (currentUser) {
+        setCurrentUser(currentUser); // Profil rasmini va menyuni to'g'rilaydi
     }
 });
-
+// ----------------------------------------------------
 // Serverdan ma'lumot olish funksiyasi (try-catch bilan xavfsiz qilingan)
 async function loadServerData() {
     try {
