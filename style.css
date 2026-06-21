@@ -14,26 +14,34 @@
 /* ==========================================
    TUN REJIMI (DARK MODE) O'ZGARUVCHILARI
    ========================================== */
+/* ==========================================
+   TUN REJIMI (SEHRLI INVERT USULI)
+   ========================================== */
 body.dark-mode {
-  --white: #121212;         /* Oq rang qora bo'ladi */
-  --gray-50: #1e1e1e;       /* Och kulrang to'q bo'ladi */
-  --gray-100: #252525;
-  --gray-200: #2d2d2d;
-  --gray-300: #3d3d3d;
-  --gray-800: #f5f5f5;      /* Qora matnlar oq bo'ladi */
-  --gray-900: #ffffff;
-  --shadow: 0 4px 12px rgba(0,0,0,0.5);
-  background-color: var(--white);
-  color: var(--gray-900);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Butun saytning oq ranglarini qoraga, qorani oqqa aylantiradi. 
+     hue-rotate esa qizil va ko'k ranglar o'zgarib ketmasligini ta'minlaydi. */
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #ffffff; /* Invert bo'lganda bu to'q qora bo'lib qoladi */
+  min-height: 100vh;
 }
 
-body {
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* MUHIM: Rasmlar va emojilar arvohga o'xshab xunuk bo'lib qolmasligi uchun 
+   ularni yana bir marta teskari qilib, asli holiga qaytaramiz */
+body.dark-mode img,
+body.dark-mode video,
+body.dark-mode .user-avatar,
+body.dark-mode .music-thumb,
+body.dark-mode #theme-toggle,
+body.dark-mode .liquid-blob {
+  filter: invert(1) hue-rotate(180deg);
 }
 
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); min-height: 100vh; overflow-x: hidden; color: var(--gray-900); }
+/* Saytning tepasi qorayganda brauzer skrollbari oq bo'lib qolmasligi uchun */
+body.dark-mode::-webkit-scrollbar-track {
+  background: #ffffff; /* invert hisobiga qora bo'ladi */
+}
+
+
 
 /* SCROLLBAR (Zamonaviy) */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
