@@ -498,3 +498,53 @@ footer .footer-logo span { color: var(--red); }
     display: inline-block !important;
   }
 }
+
+/* ==========================================
+   YANGI LOADING SCREEN DIZAYNI
+   ========================================== */
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #0f172a; /* Premium to'q ko'k fon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.loading-logo {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1px;
+  animation: pulseLogo 2s ease-in-out infinite;
+}
+
+.loading-logo .dot {
+  color: var(--red); /* Lemado qizil rangi */
+}
+
+.loader-ring {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: var(--red);
+  border-radius: 50%;
+  animation: spinRing 1s linear infinite;
+}
+
+@keyframes spinRing { 
+  to { transform: rotate(360deg); } 
+}
+@keyframes pulseLogo { 
+  0%, 100% { opacity: 1; transform: scale(1); } 
+  50% { opacity: 0.8; transform: scale(0.98); } 
+}
