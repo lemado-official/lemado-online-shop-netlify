@@ -979,21 +979,7 @@ window.addEventListener('load', () => {
 
   loadServerData();
 });
-// Sahifa har safar yuklanganda brauzer xotirasini tekshiramiz
-document.addEventListener('DOMContentLoaded', () => {
-  const savedUser = localStorage.getItem('lemado_session');
-  
-  if (savedUser) {
-    try {
-      const user = JSON.parse(savedUser);
-      // Xotirada foydalanuvchi topilsa, uni qaytadan aktivlashtiramiz
-      setCurrentUser(user);
-    } catch (e) {
-      console.error("Sessiyani yuklashda xatolik:", e);
-      localStorage.removeItem('lemado_session');
-    }
-  }
-});
+
 // Sahifadagi barcha elementlar va rasm/stillar yuklanib bo'lingach ishlaydi
 window.addEventListener('load', () => {
   const loadingScreen = document.getElementById('loading-screen');
@@ -1138,14 +1124,25 @@ function hideLoading() {
     }
 }
 
-// 3. ASOSIY ISHGA TUSHIRUVCHI QISM (Xatosiz variant)
+// =======================================================
+// YAKUNIY ISHGA TUSHIRISH (Eng oxirgi qatorga shu qo'yiladi)
+// =======================================================
 window.addEventListener('load', async () => {
-    console.log("Sahifa yuklandi.");
+    console.log("Sahifa yuklandi. Tizim tekshirilmoqda...");
     
-    // Serverdan ma'lumotlarni kutamiz
+    // 1. Agar xotirada user bo'lsa (lemado_user), uni faollashtiramiz
+    const savedUser = localStorage.getItem('lemado_user');
+    if (savedUser) {
+        try {
+            setCurrentUser(JSON.parse(savedUser));
+        } catch(e) {
+            localStorage.removeItem('lemado_user');
+        }
+    }
+
+    // 2. Serverdan ma'lumotlarni kutamiz
     await loadServerData();
     
-    // Ma'lumotlar kelsin yoki kelmasin, loadingni yopamiz
+    // 3. Loading ekranini yopamiz
     hideLoading();
 });
-
