@@ -12,34 +12,55 @@
 }
 
 /* ==========================================
-   TUN REJIMI (DARK MODE) O'ZGARUVCHILARI
+   PROFESSIONAL TUN REJIMI (XAVFSIZ USUL)
    ========================================== */
-/* ==========================================
-   TUN REJIMI (SEHRLI INVERT USULI)
-   ========================================== */
+/* 1. Asosiy o'zgaruvchilarni qorong'ilashtiramiz */
 body.dark-mode {
-  /* Butun saytning oq ranglarini qoraga, qorani oqqa aylantiradi. 
-     hue-rotate esa qizil va ko'k ranglar o'zgarib ketmasligini ta'minlaydi. */
-  filter: invert(1) hue-rotate(180deg);
-  background-color: #ffffff; /* Invert bo'lganda bu to'q qora bo'lib qoladi */
-  min-height: 100vh;
+  --white: #121212;
+  --gray-50: #1a1a1a;
+  --gray-100: #222222;
+  --gray-200: #333333;
+  --gray-300: #444444;
+  --gray-800: #e0e0e0;
+  --gray-900: #ffffff;
+  background-color: var(--white) !important;
+  color: var(--gray-900) !important;
 }
 
-/* MUHIM: Rasmlar va emojilar arvohga o'xshab xunuk bo'lib qolmasligi uchun 
-   ularni yana bir marta teskari qilib, asli holiga qaytaramiz */
-body.dark-mode img,
-body.dark-mode video,
-body.dark-mode .user-avatar,
-body.dark-mode .music-thumb,
-body.dark-mode #theme-toggle,
-body.dark-mode .liquid-blob {
-  filter: invert(1) hue-rotate(180deg);
+/* 2. Qattiq (oq) yozilgan joylarni majburan qoraytiruvchi kod */
+body.dark-mode .admin-nav,
+body.dark-mode .admin-nav-item,
+body.dark-mode header,
+body.dark-mode .bottom-nav,
+body.dark-mode .card,
+body.dark-mode .product-card,
+body.dark-mode .store-card,
+body.dark-mode .dropdown-menu,
+body.dark-mode .modal-content,
+body.dark-mode table,
+body.dark-mode th,
+body.dark-mode td,
+body.dark-mode .admin-section {
+  background-color: var(--white) !important;
+  color: var(--gray-900) !important;
+  border-color: var(--gray-200) !important;
 }
 
-/* Saytning tepasi qorayganda brauzer skrollbari oq bo'lib qolmasligi uchun */
-body.dark-mode::-webkit-scrollbar-track {
-  background: #ffffff; /* invert hisobiga qora bo'ladi */
+/* 3. Inputlar (Matn kiritish joylari) qora rejimda chiroyli turishi uchun */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: var(--gray-100) !important;
+  color: var(--gray-900) !important;
+  border: 1px solid var(--gray-200) !important;
 }
+
+/* 4. Soya (Shadow) effektlarini moslashtirish (qora fonda xunuk ko'rinmasligi uchun) */
+body.dark-mode * {
+  box-shadow: none !important;
+}
+
+
 
 
 
