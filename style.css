@@ -41,40 +41,7 @@ body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: var(
 ::-webkit-scrollbar-thumb { background: var(--gray-400); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--gray-500); }
 
-/* LOADING SCREEN */
-#loading-screen {
-  position: fixed; 
-  inset: 0; 
-  background: var(--gray-900); /* To'q fonda suyuqlik effekti juda yorqin va chiroyli ko'rinadi */
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: center;
-  z-index: 10000; 
-  transition: opacity 0.5s ease; 
-  color: white; 
-  text-align: center;
-}
-#loading-screen .logo-big { 
-  font-size: clamp(48px, 8vw, 72px); 
-  font-weight: 900; 
-  letter-spacing: -2px; 
-  margin-bottom: 4px; 
-  background: linear-gradient(135deg, #ffffff 50%, var(--gray-400));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-#loading-screen .logo-big span { 
-  color: var(--red); 
-  -webkit-text-fill-color: var(--red);
-}
-#loading-screen .tagline { 
-  font-size: clamp(13px, 3vw, 16px); 
-  opacity: 0.6; 
-  margin-bottom: 40px; 
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
+
 
 /* 🧪 KUCHLI LIQUID (SUYUQLIK) EFFEKTI */
 .liquid-container {
