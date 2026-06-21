@@ -218,23 +218,27 @@ app.put('/api/admin/stores/:id/verify', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-// router.delete o'rniga app.delete yoziladi:
+// Do'konni o'chirish (va unga tegishli mahsulotlarni ham tozalash)
 app.delete('/api/admin/stores/:id', async (req, res) => {
-  try {
-    const storeId = req.params.id;
+    try {
+        const storeId = req.params.id;
 
-    // MongoDB dan do'konni o'chirish
-    const deletedStore = await Store.findByIdAndDelete(storeId);
+        // 1. Avval do'konni o'zini o'chiramiz
+        const deletedStore = await Store.findByIdAndDelete(storeId);
+        
+        if (!deletedStore) {
+            return res.status(404).json({ success: false, message: "Do'kon topilmadi" });
+        }
 
-    if (!deletedStore) {
-      return res.status(404).json({ success: false, message: "Do'kon topilmadi" });
+        // 2. ENGI MUHIM QISM: Shu do'konga tegishli BARCHA mahsulotlarni o'chiramiz
+        // (Sizning bazangizda storeId qanday nomlangan bo'lsa shunday yozing, odatda 'storeId' bo'ladi)
+        await Product.deleteMany({ storeId: storeId });
+
+        res.json({ success: true, message: "Do'kon va uning barcha mahsulotlari muvaffaqiyatli o'chirildi!" });
+    } catch (err) {
+        console.error("O'chirishda xatolik:", err);
+        res.status(500).json({ success: false, message: "Server xatosi" });
     }
-
-    res.json({ success: true, message: "Do'kon muvaffaqiyatli o'chirildi" });
-  } catch (error) {
-    console.error("O'chirishda xatolik:", error);
-    res.status(500).json({ success: false, message: "Serverda xatolik yuz berdi" });
-  }
 });
 
 // Barcha foydalanuvchilarni admin panel uchun olish yo'lagi
