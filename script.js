@@ -1150,3 +1150,36 @@ window.addEventListener('load', async () => {
     // 3. Loading ekranini yopamiz
     hideLoading();
 });
+
+// ==========================================
+// TUN/KUN REJIMI (DARK MODE) MANTIQI
+// ==========================================
+function toggleTheme() {
+    const body = document.body;
+    const themeBtn = document.getElementById('theme-toggle');
+    
+    // Klasni qo'shamiz yoki olib tashlaymiz
+    body.classList.toggle('dark-mode');
+    
+    // Holatni tekshiramiz
+    const isDark = body.classList.contains('dark-mode');
+    
+    // Xotiraga saqlaymiz
+    localStorage.setItem('lemado_theme', isDark ? 'dark' : 'light');
+    
+    // Ikonkani o'zgartiramiz
+    if (themeBtn) themeBtn.innerText = isDark ? '☀️' : '🌙';
+}
+
+// Sahifa yuklanayotganda foydalanuvchining oldingi tanlovini tekshiramiz
+window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('lemado_theme');
+    const themeBtn = document.getElementById('theme-toggle');
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (themeBtn) themeBtn.innerText = '☀️';
+    } else {
+        if (themeBtn) themeBtn.innerText = '🌙';
+    }
+});
