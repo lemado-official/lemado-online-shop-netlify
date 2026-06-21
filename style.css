@@ -12,55 +12,61 @@
 }
 
 /* ==========================================
-   PROFESSIONAL TUN REJIMI (XAVFSIZ USUL)
+   🔥 TEMIR-BETON TUN REJIMI (SUPER KUCHLI) 🔥
    ========================================== */
-/* 1. Asosiy o'zgaruvchilarni qorong'ilashtiramiz */
-body.dark-mode {
-  --white: #121212;
-  --gray-50: #1a1a1a;
-  --gray-100: #222222;
-  --gray-200: #333333;
-  --gray-300: #444444;
-  --gray-800: #e0e0e0;
-  --gray-900: #ffffff;
-  background-color: var(--white) !important;
-  color: var(--gray-900) !important;
+
+/* 1. Asosiy o'zgaruvchilar va orqa fonni to'q rangga o'tkazish */
+html body.dark-mode {
+  --white: #121212 !important;
+  --gray-50: #1a1a1a !important;
+  --gray-100: #222222 !important;
+  --gray-200: #333333 !important;
+  --gray-300: #444444 !important;
+  --gray-800: #e0e0e0 !important;
+  --gray-900: #ffffff !important;
+  background-color: #121212 !important;
+  color: #ffffff !important;
 }
 
-/* 2. Qattiq (oq) yozilgan joylarni majburan qoraytiruvchi kod */
-body.dark-mode .admin-nav,
-body.dark-mode .admin-nav-item,
-body.dark-mode header,
-body.dark-mode .bottom-nav,
-body.dark-mode .card,
-body.dark-mode .product-card,
-body.dark-mode .store-card,
-body.dark-mode .dropdown-menu,
-body.dark-mode .modal-content,
-body.dark-mode table,
-body.dark-mode th,
-body.dark-mode td,
-body.dark-mode .admin-section {
-  background-color: var(--white) !important;
-  color: var(--gray-900) !important;
-  border-color: var(--gray-200) !important;
+/* 2. Qattiq yozilgan OQ ranglarni majburan QORA qilish */
+html body.dark-mode .admin-nav,
+html body.dark-mode .admin-nav-item,
+html body.dark-mode header,
+html body.dark-mode .bottom-nav,
+html body.dark-mode .card,
+html body.dark-mode .product-card,
+html body.dark-mode .product-item,
+html body.dark-mode .store-card,
+html body.dark-mode .store-item,
+html body.dark-mode .dropdown-menu,
+html body.dark-mode .modal-content,
+html body.dark-mode .admin-section,
+html body.dark-mode table,
+html body.dark-mode th,
+html body.dark-mode td,
+html body.dark-mode .table-responsive,
+html body.dark-mode .cart-item,
+html body.dark-mode .order-item,
+html body.dark-mode #music-player {
+  background-color: #121212 !important;
+  background: #121212 !important;
+  color: #ffffff !important;
+  border-color: #333333 !important;
 }
 
-/* 3. Inputlar (Matn kiritish joylari) qora rejimda chiroyli turishi uchun */
-body.dark-mode input,
-body.dark-mode select,
-body.dark-mode textarea {
-  background-color: var(--gray-100) !important;
-  color: var(--gray-900) !important;
-  border: 1px solid var(--gray-200) !important;
+/* 3. Inputlar (Matn kiritish joylari) dizayni */
+html body.dark-mode input,
+html body.dark-mode select,
+html body.dark-mode textarea {
+  background-color: #222222 !important;
+  color: #ffffff !important;
+  border: 1px solid #444444 !important;
 }
 
-/* 4. Soya (Shadow) effektlarini moslashtirish (qora fonda xunuk ko'rinmasligi uchun) */
-body.dark-mode * {
+/* 4. Soya (Shadow) larni qora fonga moslash yoki o'chirish */
+html body.dark-mode * {
   box-shadow: none !important;
 }
-
-
 
 
 
