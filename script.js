@@ -487,30 +487,35 @@ function viewProduct(id) {
 // =======================================================
 // 🏪 DO'KONLARNI FILTRLASH VA EKRAUGA CHIZISH TIZIMI (TOZA VARIANT)
 // =======================================================
+// ========================================================
+// KOORDINATA: script.js -> renderStoresHome funksiyasi
+// ========================================================
 function renderStoresHome() {
+    // 1. Har ikkala elementni ham xavfsiz e'lon qilamiz
     const officialGrid = document.getElementById('stores-grid-home');
     const allGrid = document.getElementById('all-stores-grid');
 
-    // MUXIM: Agar elementlar sahifada bo'lmasa, funksiya xatosiz to'xtaydi
-    if (!officialGrid && !allGrid) {
-        return; 
-    }
+    // 2. Agar sahifada bu elementlar bo'lmasa, funksiya xatosiz to'xtaydi (Crash bo'lmaydi)
+    if (!officialGrid && !allGrid) return;
 
-    // Ma'lumotlarni filtrlash
-    const activeStores = Array.isArray(STORES) ? STORES.filter(s => s.status === 'active') : [];
+    // 3. STORES massivini xavfsiz tekshirib olamiz
+    const activeStores = (typeof STORES !== 'undefined' && Array.isArray(STORES)) 
+        ? STORES.filter(s => s.status === 'active') 
+        : [];
     const verifiedStores = activeStores.filter(s => s.isVerified === true);
 
-    // Faqat element mavjud bo'lganda chizamiz
+    // 4. Rasmiy do'konlar (stores-grid-home)
     if (officialGrid) {
         officialGrid.innerHTML = verifiedStores.length > 0 
             ? verifiedStores.map(s => createStoreCardHTML(s, true)).join('')
-            : '<p style="text-align:center; width:100%;">Hozircha rasmiy do\'konlar yo\'q.</p>';
+            : `<div style="grid-column:1/-1; padding:20px; text-align:center; color:#666;">Hozircha rasmiy do'konlar mavjud emas.</div>`;
     }
 
+    // 5. Barcha do'konlar (all-stores-grid)
     if (allGrid) {
         allGrid.innerHTML = activeStores.length > 0 
             ? activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('')
-            : '<p style="text-align:center; width:100%;">Hozircha faol do\'konlar yo\'q.</p>';
+            : `<div style="grid-column:1/-1; padding:20px; text-align:center; color:#666;">Hozircha faol do'konlar mavjud emas.</div>`;
     }
 }
 
