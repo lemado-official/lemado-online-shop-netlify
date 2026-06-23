@@ -1,62 +1,46 @@
-// 1. Global o'zgaruvchi (Foydalanuvchi ma'lumotlari uchun)
-window.currentUser = null;
-
-// Foydalanuvchi tizimga kirganda (Login/Register bo'lganda) shu funksiyani chaqirasiz
-function initializeProfile() {
-    // LocalStorage'dan foydalanuvchi ma'lumotlarini tekshiramiz
-    const savedUser = localStorage.getItem('user');
-    
-    if (savedUser) {
-        window.currentUser = JSON.parse(savedUser);
-        console.log("Profil yuklandi:", window.currentUser.username);
-    } else {
-        window.currentUser = null;
-        console.log("Foydalanuvchi tizimga kirmagan (Mehmon).");
-    }
-}
-
-
-
 // ==========================================
-// CONFIG & INITIALIZATION
+// CONFIG & GLOBAL STATE INITIALIZATION
 // ==========================================
 const API_URL = "https://lemado-online-shop-render.onrender.com/api";
 
 let PRODUCTS = []; 
 let STORES = [];   
 let ORDERS = [];   
-let currentUser = null;
+let currentUser = null; // Markaziy yagona foydalanuvchi o'zgaruvchisi
 let currentPage = 'home';
 let cart = [];
-let isServerSleeping = false; // 🔥 MANA SHU QATORNI QO'SHING!
+let isServerSleeping = false;
 
-// ----------------------------------------------------
-// 1. DARHOL TEKSHIRUV (Hech narsani kutmasdan ishlaydi!)
-// ----------------------------------------------------
-const savedData = localStorage.getItem('lemado_user');
-if (savedData && savedData !== "undefined") {
-    try {
-        currentUser = JSON.parse(savedData);
-        console.log("Xotiradan o'qildi:", currentUser.username);
-    } catch (e) {
-        console.error("Xotiradagi ma'lumot buzilgan, tozalanmoqda...");
-        localStorage.removeItem('lemado_user');
+// Tizim holatini tekshirish funksiyasi (Faqat yagona lemado_user kalitidan foydalanamiz)
+function initializeProfile() {
+    const savedData = localStorage.getItem('lemado_user');
+    if (savedData && savedData !== "undefined") {
+        try {
+            currentUser = JSON.parse(savedData);
+            window.currentUser = currentUser; // Har ikkala holat uchun ham osonlik yaratamiz
+            console.log("Profil muvaffaqiyatli yuklandi:", currentUser.username);
+        } catch (e) {
+            console.error("Xotiradagi ma'lumot buzilgan, tozalanmoqda...");
+            localStorage.removeItem('lemado_user');
+            currentUser = null;
+            window.currentUser = null;
+        }
+    } else {
+        currentUser = null;
+        window.currentUser = null;
+        console.log("Foydalanuvchi tizimga kirmagan (Mehmon).");
     }
 }
 
-// 2. HTML ELEMENTLAR TAYYOR BO'LGACH, UI (Dizayn) NI YANGILASH
+// Sahifa yuklanishni boshlaganda darhol profillarni tekshiramiz
+initializeProfile();
+
+// HTML elementlar tayyor bo'lgach UI dizaynini yangilash
 window.addEventListener('DOMContentLoaded', () => {
     if (currentUser) {
-        setCurrentUser(currentUser); // Profil rasmini va menyuni to'g'rilaydi
+        setCurrentUser(currentUser); // Navbardagi profil rasmi va menyuni to'g'rilaydi
     }
 });
-// ----------------------------------------------------
-// Serverdan ma'lumot olish funksiyasi (try-catch bilan xavfsiz qilingan)
-
-// ==========================================================
-// BARCHA KODNI SHU QOLIBGA SOLING (Bu xatolarni yo'q qiladi)
-// ==========================================================
-
 
 
 // UNIVERSAL YUKLASH TIZIMI (Faqat bitta bo'lishi shart!)
