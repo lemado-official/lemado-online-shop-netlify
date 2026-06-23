@@ -489,10 +489,22 @@ function viewProduct(id) {
 // =======================================================
 function renderStoresHome() {
     const officialGrid = document.getElementById('stores-grid-home');
-    if (!officialGrid) {
-        console.log("⚠️ 'stores-grid-home' elementi sahifada topilmadi!");
-        return;
+    const allGrid = document.getElementById('stores-grid-all');
+    if (!officialGrid) return;
+
+    // 1. Faqat aktiv va rasmiy do'konlar (Rasmiy bo'lim)
+    const verifiedStores = STORES.filter(s => s.status === 'active' && s.isVerified === true);
+    officialGrid.innerHTML = verifiedStores.length > 0 
+        ? verifiedStores.map(s => createStoreCardHTML(s, true)).join('')
+        : `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha rasmiy do'konlar yo'q.</div>`;
+
+    // 2. Barcha aktiv do'konlar (Yangi va Faol bo'lim)
+    if (allGrid) {
+        const activeStores = STORES.filter(s => s.status === 'active');
+        allGrid.innerHTML = activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('');
     }
+}
+
 
     console.log("Do'konlarni chizish boshlandi. Jami do'konlar soni:", STORES.length);
 
