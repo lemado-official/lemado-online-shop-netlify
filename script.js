@@ -1151,3 +1151,53 @@ window.addEventListener('load', async () => {
     hideLoading();
 });
 
+// =======================================================
+// DO'KON TUGMASINI DINAMIK BOSHQARISH
+// =======================================================
+
+// 1. Tugma bosilganda qayerga olib borishni hal qiluvchi funksiya
+function handleMainStoreBtn() {
+    if (!currentUser) {
+        alert("Do'kon ochish uchun avval tizimga kiring!");
+        // Agar sizda login modali bo'lsa, bu yerda o'shani ochish kodini qo'ying:
+        // openModal('login-modal');
+        return;
+    }
+
+    // Do'konlar ro'yxatidan userning do'konini qidiramiz
+    const userStore = STORES.find(s => s.owner === currentUser.username);
+
+    if (userStore) {
+        // Agar do'koni bor bo'lsa, Do'konim panelini ochamiz (oldingi qadamda yozgan funksiyamiz)
+        openMyStorePanel();
+    } else {
+        // Agar do'koni yo'q bo'lsa, do'kon yaratish modalini ochamiz
+        // DIQQAT: 'store-modal' o'rniga o'zingizning do'kon ochadigan html formangiz ID sini yozing
+        openModal('store-modal'); 
+    }
+}
+
+// 2. Sahifa yuklanganda yoki ma'lumot kelganda tugma yozuvini o'zgartiruvchi funksiya
+function updateMainStoreButtonUI() {
+    const btn = document.getElementById('main-store-btn');
+    if (!btn) return;
+
+    if (currentUser && STORES && STORES.length > 0) {
+        const userStore = STORES.find(s => s.owner === currentUser.username);
+        
+        if (userStore) {
+            // Userning do'koni bor! Tugmani yashil (yoki boshqa rang) qilib, yozuvini o'zgartiramiz
+            if (userStore.isVerified) {
+                btn.innerHTML = "🏪 Do'konimga kirish";
+            } else {
+                btn.innerHTML = "⏳ Do'konim (Tekshirilmoqda)";
+            }
+        } else {
+            // User login qilgan, lekin do'koni yo'q
+            btn.innerHTML = "Do'kon ochish 🏪";
+        }
+    } else {
+        // Mehmon (login qilmagan)
+        btn.innerHTML = "Do'kon ochish 🏪";
+    }
+}
