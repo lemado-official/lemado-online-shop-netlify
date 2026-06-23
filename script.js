@@ -67,14 +67,26 @@ async function loadServerData() {
             PRODUCTS = prodData.products || prodData;
         }
 
-        // 2. Do'konlarni yozib olamiz (Endi oddiy userda ham do'konlar yuklanadi!)
+        // 2. Do'konlarni yozib olamiz
         if (storesResponse && storesResponse.ok) {
             const storeData = await storesResponse.json();
             STORES = storeData.stores || storeData;
-            console.log("Do'konlar va Mahsulotlar muvaffaqiyatli yuklandi!");
+            console.log("Do'konlar va Mahsulotlar muvaffaqiyatli yuklandi!", STORES);
         }
         
-        // 3. Ma'lumotlar kelganidan keyin UI tugmalarni yangilaymiz
+        // 3. Mahsulotlar va Do'konlarni ekranga chizish buyruqlari
+        if (typeof renderProducts === 'function') {
+            renderProducts(); // Mahsulotlar mavjud bo'lsa chiziladi
+        }
+        
+        // 🔥 MANA SHU YERDA YANGI FUNKSIYANI XAVFSIZ CHAQIRAMIZ:
+        if (typeof renderStoresHome === 'function') {
+            renderStoresHome(); 
+        } else {
+            console.error("⚠️ Diqqat: 'renderStoresHome' funksiyasi script.js ichida topilmadi!");
+        }
+        
+        // 4. Ma'lumotlar kelganidan keyin UI tugmalarni yangilaymiz
         updateMainStoreButtonUI();
         
         if (tagline) tagline.innerText = "Xush kelibsiz!";
@@ -82,6 +94,10 @@ async function loadServerData() {
     } catch (error) {
         console.warn("Server xatosi yoki vaqt tugadi:", error.message);
         if (tagline) tagline.innerText = "Server uyg'onmoqda, ozgina kuting...";
+        
+        // Server uxlab yotgan bo'lsa ham foydalanuvchiga bo'sh konteynerlarni ko'rsatish
+        if (typeof renderStoresHome === 'function') renderStoresHome();
+        
         updateMainStoreButtonUI();
         return false;
     }
@@ -467,9 +483,18 @@ function viewProduct(id) {
 // =======================================================
 // 🏪 DO'KONLARNI FILTRLASH VA EKRAUGA CHIZISH TIZIMI
 // =======================================================
+
+// =======================================================
+// 🏪 DO'KONLARNI FILTRLASH VA EKRAUGA CHIZISH TIZIMI (TOZA VARIANT)
+// =======================================================
 function renderStoresHome() {
     const officialGrid = document.getElementById('stores-grid-home');
-    if (!officialGrid) return;
+    if (!officialGrid) {
+        console.log("⚠️ 'stores-grid-home' elementi sahifada topilmadi!");
+        return;
+    }
+
+    console.log("Do'konlarni chizish boshlandi. Jami do'konlar soni:", STORES.length);
 
     // 1. Faqat admin tomonidan tasdiqlangan do'konlar (isVerified === true)
     const verifiedStores = STORES.filter(s => s.isVerified === true);
@@ -495,8 +520,8 @@ function renderStoresHome() {
             allStoresSection.id = 'all-stores-section-wrapper';
             allStoresSection.className = 'section';
             allStoresSection.innerHTML = `
-                <div class="section-title" style="margin-top: 40px;">Yangi va Faol Do'konlar 🛍️</div>
-                <div class="stores-grid" id="stores-grid-all"></div>
+                <div class="section-title" style="margin-top: 40px; font-size: 20px; font-weight: 800;">Yangi va Faol Do'konlar 🛍️</div>
+                <div class="stores-grid" id="stores-grid-all" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 16px;"></div>
             `;
             // Rasmiy do'konlar bo'limining aynan tagidan joylashtiramiz
             officialSection.parentNode.insertBefore(allStoresSection, officialSection.nextSibling);
@@ -512,11 +537,42 @@ function renderStoresHome() {
                     Hozircha platformada birorta ham do'kon ochilmagan.
                 </div>`;
         } else {
-            // Ushbu bo'limda hamma do'konlar (tasdiqlangan va tasdiqlanmaganlar) teng ko'rinadi
+            // Ushbu bo'limda hamma do'konlar teng ko'rinadi
             allGrid.innerHTML = STORES.map(s => createStoreCardHTML(s, s.isVerified)).join('');
         }
     }
 }
+
+// Do'kon kartochkalarining HTML shabloni (Xatoliksiz toza versiya)
+function createStoreCardHTML(s, isOfficial) {
+    const storeId = s._id || s.id;
+    const fallbackLogo = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--gray-100); font-size:28px;">🏪</div>`;
+    const sName = s.name || "Nomsiz do'kon";
+    const sCategory = s.category || "Umumiy do'kon";
+
+    return `
+        <div class="store-card" onclick="handleStoreClick('${storeId}')" style="cursor:pointer; background:var(--white); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); transition:var(--transition); display:flex; align-items:center; gap:16px; border:1px solid var(--gray-100);">
+            <div style="width:60px; height:60px; border-radius:12px; overflow:hidden; background:var(--gray-50); flex-shrink:0; display:flex; align-items:center; justify-content:center; border: 1px solid var(--gray-200);">
+                ${s.logo ? `<img src="${s.logo}" alt="${sName}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='🏪'">` : fallbackLogo}
+            </div>
+            <div style="flex-grow:1; min-width:0;">
+                <h4 style="margin:0 0 4px 0; font-size:16px; font-weight:700; color:var(--gray-900); display:flex; align-items:center; gap:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${sName} 
+                    ${isOfficial ? '<span title="Rasmiy Tasdiqlangan Do\'kon" style="color:#28a745; font-size:14px; font-weight:bold;">✓</span>' : ''}
+                </h4>
+                <p style="margin:0; font-size:13px; color:var(--gray-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${sCategory}
+                </p>
+            </div>
+        </div>
+    `;
+}
+
+function handleStoreClick(storeId) {
+    showToast("Do'kon ID: " + storeId);
+}
+
+
 
 // Do'kon kartochkalarining HTML shabloni (Chiroyli premium dizayn)
 function createStoreCardHTML(s, isOfficial) {
