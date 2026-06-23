@@ -35,16 +35,19 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 // 2. Do'konlar (Stores)
+// 2. Do'konlar (Stores)
 const storeSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  owner: { type: String, required: true }, 
-  description: String,
+  owner: { type: String, required: true },
   category: { type: String, required: true },
   logo: { type: String, default: '' },
-  isVerified: { type: Boolean, default: false }, 
+  description: { type: String, default: '' },
+  isVerified: { type: Boolean, default: false }, // Rasmiylik (✓)
+  status: { type: String, default: 'pending' },  // pending, active, rejected
   createdAt: { type: Date, default: Date.now }
 });
 const Store = mongoose.model('Store', storeSchema);
+
 
 // 3. Mahsulotlar (Products)
 const productSchema = new mongoose.Schema({
