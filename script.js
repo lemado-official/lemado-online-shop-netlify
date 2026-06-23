@@ -488,29 +488,37 @@ function viewProduct(id) {
 // 🏪 DO'KONLARNI FILTRLASH VA EKRAUGA CHIZISH TIZIMI (TOZA VARIANT)
 // =======================================================
 function renderStoresHome() {
-    // HTML'dagi ID'lar bilan moslashtirildi
+    // 1. Elementlarni ID orqali aniq topib olamiz
     const officialGrid = document.getElementById('stores-grid-home');
-    const allGrid = document.getElementById('all-stores-grid'); // Siz aytgan ID
+    const allGrid = document.getElementById('all-stores-grid');
 
-    // Ma'lumotlarni filtrlash
-    const activeStores = STORES.filter(s => s.status === 'active');
+    // 2. Agar asosiy element bo'lmasa, xatolik bermaslik uchun chiqib ketamiz
+    if (!officialGrid) {
+        console.warn("DIQQAT: 'stores-grid-home' elementi topilmadi!");
+        return;
+    }
+
+    // 3. Ma'lumotlarni tayyorlab olamiz
+    // STORES o'zgaruvchisi global ekanligiga ishonch hosil qiling
+    const activeStores = Array.isArray(STORES) ? STORES.filter(s => s.status === 'active') : [];
     const verifiedStores = activeStores.filter(s => s.isVerified === true);
 
-    // 1. Rasmiy do'konlar (Home qismi)
-    if (officialGrid) {
-        officialGrid.innerHTML = verifiedStores.length > 0 
-            ? verifiedStores.map(s => createStoreCardHTML(s, true)).join('')
-            : `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha rasmiy do'konlar mavjud emas.</div>`;
+    // 4. "Rasmiy Do'konlar" qismini chizish
+    if (verifiedStores.length > 0) {
+        officialGrid.innerHTML = verifiedStores.map(s => createStoreCardHTML(s, true)).join('');
+    } else {
+        officialGrid.innerHTML = `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha rasmiy do'konlar mavjud emas.</div>`;
     }
 
-    // 2. Barcha faol do'konlar (All qismi)
+    // 5. "Barcha Do'konlar" qismini chizish
     if (allGrid) {
-        allGrid.innerHTML = activeStores.length > 0 
-            ? activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('')
-            : `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha faol do'konlar mavjud emas.</div>`;
+        if (activeStores.length > 0) {
+            allGrid.innerHTML = activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('');
+        } else {
+            allGrid.innerHTML = `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha faol do'konlar mavjud emas.</div>`;
+        }
     }
 }
-    
 
     
     // 2. YANGI BO'LIM: "Yangi va Faol Do'konlar" (Hamma yangi ochilgan do'konlar chiqadigan joy)
