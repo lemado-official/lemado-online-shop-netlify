@@ -1487,3 +1487,38 @@ async function adminToggleVerify(storeId) {
         renderAdminStoresTable();
     }
 }
+
+function renderAdminStoresTable() {
+    const tableBody = document.getElementById('stores-table');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = STORES.map(s => `
+        <tr>
+            <td>${s.name}</td>
+            <td>${s.owner}</td>
+            <td>${s.category}</td>
+            <td>${s.status === 'active' ? '✅ Faol' : '⏳ Kutilmoqda'}</td>
+            <td>
+                ${s.status === 'pending' 
+                    ? `<button onclick="adminApprove('${s._id}')" style="background:#28a745; color:white; border:none; padding:5px 10px; cursor:pointer;">Aktivlash</button>`
+                    : `<button onclick="adminToggleVerify('${s._id}')" style="background:${s.isVerified ? '#ffc107' : '#007bff'}; color:white; border:none; padding:5px 10px; cursor:pointer;">
+                        ${s.isVerified ? '✓ Rasmiy' : 'Rasmiy qilish'}
+                       </button>`
+                }
+            </td>
+        </tr>
+    `).join('');
+}
+
+// API so'rov funksiyalari
+async function adminApprove(id) {
+    await fetch(`${API_URL}/admin/stores/${id}/approve`, { method: 'PUT' });
+    await loadServerData(); // Bazani yangilab olamiz
+    renderAdminStoresTable(); // Jadvalni qayta chizamiz
+}
+
+async function adminToggleVerify(id) {
+    await fetch(`${API_URL}/admin/stores/${id}/toggle-verify`, { method: 'PUT' });
+    await loadServerData();
+    renderAdminStoresTable();
+}
