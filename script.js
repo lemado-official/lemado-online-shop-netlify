@@ -1522,3 +1522,43 @@ async function adminToggleVerify(id) {
     await loadServerData();
     renderAdminStoresTable();
 }
+// ========================================================
+// DO'KONLARNI EKRANGA CHIZISH FUNKSIYASI (To'g'rilangan)
+// ========================================================
+function renderStoresHome() {
+    // HTML'dagi elementlarni xavfsiz izlash
+    const officialGrid = document.getElementById('stores-grid-home');
+    const allGrid = document.getElementById('all-stores-grid');
+
+    // 1. Agar sahifada bu elementlar bo'lmasa, kod xato bermaydi
+    if (!officialGrid && !allGrid) return;
+
+    // 2. Ma'lumotlarni saralash (statusi 'active' bo'lganlar)
+    const activeStores = Array.isArray(STORES) ? STORES.filter(s => s.status === 'active') : [];
+    const verifiedStores = activeStores.filter(s => s.isVerified === true);
+
+    // 3. Rasmiy do'konlar (stores-grid-home)
+    if (officialGrid) {
+        officialGrid.innerHTML = verifiedStores.length > 0 
+            ? verifiedStores.map(s => createStoreCardHTML(s, true)).join('')
+            : `<div style="grid-column:1/-1; padding:20px; text-align:center; color:#666;">Hozircha rasmiy do'konlar mavjud emas.</div>`;
+    }
+
+    // 4. Barcha do'konlar (all-stores-grid)
+    if (allGrid) {
+        allGrid.innerHTML = activeStores.length > 0 
+            ? activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('')
+            : `<div style="grid-column:1/-1; padding:20px; text-align:center; color:#666;">Hozircha faol do'konlar mavjud emas.</div>`;
+    }
+}
+
+// Yordamchi funksiya: Agar sizda createStoreCardHTML bo'lmasa, uni ham qo'shing:
+function createStoreCardHTML(store, isVerified) {
+    return `
+        <div class="store-card">
+            <img src="${store.logo || 'default-logo.png'}" alt="${store.name}">
+            <h3>${store.name} ${isVerified ? '✓' : ''}</h3>
+            <p>${store.description || 'Tavsif yo\'q'}</p>
+        </div>
+    `;
+}
