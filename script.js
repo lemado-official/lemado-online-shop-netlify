@@ -488,39 +488,44 @@ function viewProduct(id) {
 // 🏪 DO'KONLARNI FILTRLASH VA EKRAUGA CHIZISH TIZIMI (TOZA VARIANT)
 // =======================================================
 function renderStoresHome() {
+    // 1. DOM elementlarni funksiya ichida aniq qidiramiz
     const officialGrid = document.getElementById('stores-grid-home');
     const allGrid = document.getElementById('stores-grid-all');
-    if (!officialGrid) return;
 
-    // 1. Faqat aktiv va rasmiy do'konlar (Rasmiy bo'lim)
-    const verifiedStores = STORES.filter(s => s.status === 'active' && s.isVerified === true);
-    officialGrid.innerHTML = verifiedStores.length > 0 
-        ? verifiedStores.map(s => createStoreCardHTML(s, true)).join('')
-        : `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha rasmiy do'konlar yo'q.</div>`;
-
-    // 2. Barcha aktiv do'konlar (Yangi va Faol bo'lim)
-    if (allGrid) {
-        const activeStores = STORES.filter(s => s.status === 'active');
-        allGrid.innerHTML = activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('');
+    // Agar bu sahifada bu elementlar bo'lmasa, funksiya xatosiz chiqib ketadi
+    if (!officialGrid) {
+        console.warn("DIQQAT: 'stores-grid-home' elementi topilmadi!");
+        return;
     }
-}
-
 
     console.log("Do'konlarni chizish boshlandi. Jami do'konlar soni:", STORES.length);
 
-    // 1. Faqat admin tomonidan tasdiqlangan do'konlar (isVerified === true)
-    const verifiedStores = STORES.filter(s => s.isVerified === true);
+    // 2. Ma'lumotlarni filtrlash (statusi 'active' bo'lganlar)
+    const activeStores = STORES.filter(s => s.status === 'active');
+    
+    // 3. Rasmiy do'konlar (status='active' VA isVerified=true)
+    const verifiedStores = activeStores.filter(s => s.isVerified === true);
 
-    // Rasmiy do'konlar qismini chizamiz
-    if (verifiedStores.length === 0) {
-        officialGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 24px; font-size: 14px; background: var(--gray-50); border-radius: var(--radius); border: 1px dashed var(--gray-300);">
-                🔒 Hozircha rasmiy tasdiqlangan do'konlar mavjud emas. Admin tekshiruvidan so'ng shu yerda e'lon qilinadi.
-            </div>`;
-    } else {
+    // 4. "Rasmiy Do'konlar" bo'limini to'ldirish
+    if (verifiedStores.length > 0) {
         officialGrid.innerHTML = verifiedStores.map(s => createStoreCardHTML(s, true)).join('');
+    } else {
+        officialGrid.innerHTML = `<p style="padding:20px; text-align:center;">Hozircha rasmiy do'konlar mavjud emas.</p>`;
     }
 
+    // 5. "Barcha Do'konlar" bo'limini to'ldirish
+    if (allGrid) {
+        if (activeStores.length > 0) {
+            allGrid.innerHTML = activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('');
+        } else {
+            allGrid.innerHTML = `<p style="padding:20px; text-align:center;">Hozircha faol do'konlar mavjud emas.</p>`;
+        }
+    }
+}
+
+    
+
+    
     // 2. YANGI BO'LIM: "Yangi va Faol Do'konlar" (Hamma yangi ochilgan do'konlar chiqadigan joy)
     let allStoresSection = document.getElementById('all-stores-section-wrapper');
     
