@@ -151,36 +151,7 @@ function rateLimitCheck(action) {
   return true;
 }
 
-// ==========================================
-// SERVERDAN MA'LUMOTLARNI YUKLASH (FETCH)
-// ==========================================
-async function loadServerData() {
-    const tagline = document.querySelector('.tagline');
-    
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => {
-            isServerSleeping = true; // Server javob bermadi, demak "uxlayapti"
-            if (tagline) tagline.innerText = "Server uyg'onmoqda, ozgina kuting...";
-            controller.abort();
-        }, 10000); // 10 soniya kutamiz
 
-        const response = await fetch(`${API_URL}/products`, { signal: controller.signal });
-        clearTimeout(timeoutId);
-
-        if (!response.ok) throw new Error("Server xatosi");
-        
-        const data = await response.json();
-        PRODUCTS = data.products || data;
-        
-        // Muvaffaqiyatli yuklandi
-        isServerSleeping = false; 
-        if (tagline) tagline.innerText = "Xush kelibsiz!";
-        
-    } catch (error) {
-        console.warn("Server bilan muammo:", error.message);
-    }
-}
 
 // loadServerData() ichida yoki undan keyin:
 if (isServerSleeping) {
