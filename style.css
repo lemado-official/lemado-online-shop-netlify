@@ -68,6 +68,45 @@ html body.dark-mode * {
   box-shadow: none !important;
 }
 
+/* ==========================================
+   YASHIRINGAN VA O'JAR OQ BLOKLARNI QORAYTIRISH
+   ========================================== */
+
+/* HTML ichida style="background: #fff" deb yozilganlarni ovlash */
+html body.dark-mode div[style*="background: #fff"],
+html body.dark-mode div[style*="background:#fff"],
+html body.dark-mode div[style*="background-color: white"],
+html body.dark-mode div[style*="background-color: #ffffff"],
+html body.dark-mode div[style*="background-color: #fff"] {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+/* Saytdagi boshqa ehtimoliy oq qolib ketgan qismlar */
+html body.dark-mode .modal,
+html body.dark-mode .cart-container,
+html body.dark-mode .profile-wrap,
+html body.dark-mode .user-profile,
+html body.dark-mode .top-nav,
+html body.dark-mode .search-bar,
+html body.dark-mode .filter-section {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+  border-color: #333333 !important;
+}
+
+/* Agar matn qora bo'lib qolayotgan bo'lsa, ularni oqartirish */
+html body.dark-mode span,
+html body.dark-mode p,
+html body.dark-mode h1,
+html body.dark-mode h2,
+html body.dark-mode h3,
+html body.dark-mode h4,
+html body.dark-mode h5,
+html body.dark-mode h6 {
+  color: #ffffff !important;
+}
+
 
 
 /* SCROLLBAR (Zamonaviy) */
