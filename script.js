@@ -15,11 +15,7 @@ function initializeProfile() {
     }
 }
 
-// Sahifa yuklanganda profilni ishga tushiramiz
-document.addEventListener("DOMContentLoaded", () => {
-    initializeProfile();
-    loadServerData(); // Keyingi qadamdagi funksiya
-});
+
 
 // ==========================================
 // CONFIG & INITIALIZATION
@@ -60,22 +56,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // BARCHA KODNI SHU QOLIBGA SOLING (Bu xatolarni yo'q qiladi)
 // ==========================================================
 
-window.addEventListener('load', async () => {
-    console.log("Sahifa yuklandi, server ma'lumotlari kutilmoqda...");
 
-    // 1. Serverdan ma'lumotlarni yuklash (await bilan)
-    await loadServerData();
-
-    // 2. Loading ekranni yopish
-    const ls = document.getElementById('loading-screen');
-    if (ls) {
-        ls.style.opacity = '0';
-        setTimeout(() => { 
-            ls.style.display = 'none'; 
-        }, 500);
-    }
-    console.log("Loading muvaffaqiyatli yopildi.");
-});
 
 // UNIVERSAL YUKLASH TIZIMI (Faqat bitta bo'lishi shart!)
 async function loadServerData() {
