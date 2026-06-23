@@ -907,6 +907,9 @@ async function verifyStore(id) {
       await loadServerData();
       await loadAllStoresForAdmin();
       await updateAdminStats();
+      
+      // SHU QATOR QO'SHILDI: Tugma holatini yangilash
+      updateMainStoreButtonUI(); 
     }
   } catch (err) {
     showToast('Do\'konni tasdiqlashda xatolik yuz berdi.');
@@ -1097,7 +1100,8 @@ setTimeout(() => {
     }
 }, 2000);
 
-// 1. Serverdan ma'lumot olish funksiyasi (Siz yozgan kodni to'g'riladik)
+
+
 async function loadServerData() {
     try {
         const controller = new AbortController();
@@ -1109,16 +1113,23 @@ async function loadServerData() {
         if (!response.ok) throw new Error("Serverdan ma'lumot kelmadi");
         
         const data = await response.json();
-        // Ma'lumotni saqlash (data.products yoki to'g'ridan-to'g'ri data)
         PRODUCTS = data.products || data; 
         console.log("Ma'lumotlar muvaffaqiyatli yuklandi!");
-        return true; // Muvaffaqiyatli yuklandi
+        
+        // SHU QATOR QO'SHILDI: Ma'lumotlar kelgach tugmani yangilash
+        updateMainStoreButtonUI();
+        
+        return true; 
     } catch (error) {
         console.warn("Server xatosi:", error.message);
-        return false; // Yuklanmadi
-        updateMainStoreButtonUI(); // <--- SHU QATORNI QO'SHASIZ
+        
+        // TO'G'RILANDI: return buyrug'idan oldin yozildi
+        updateMainStoreButtonUI(); 
+        return false; 
     }
 }
+
+
 
 // 2. Loading-ni yopuvchi funksiya
 function hideLoading() {
