@@ -28,6 +28,7 @@ let ORDERS = [];
 let currentUser = null;
 let currentPage = 'home';
 let cart = [];
+let isServerSleeping = false; // 🔥 MANA SHU QATORNI QO'SHING!
 
 // ----------------------------------------------------
 // 1. DARHOL TEKSHIRUV (Hech narsani kutmasdan ishlaydi!)
