@@ -1,3 +1,26 @@
+// 1. Global o'zgaruvchi (Foydalanuvchi ma'lumotlari uchun)
+window.currentUser = null;
+
+// Foydalanuvchi tizimga kirganda (Login/Register bo'lganda) shu funksiyani chaqirasiz
+function initializeProfile() {
+    // LocalStorage'dan foydalanuvchi ma'lumotlarini tekshiramiz
+    const savedUser = localStorage.getItem('user');
+    
+    if (savedUser) {
+        window.currentUser = JSON.parse(savedUser);
+        console.log("Profil yuklandi:", window.currentUser.username);
+    } else {
+        window.currentUser = null;
+        console.log("Foydalanuvchi tizimga kirmagan (Mehmon).");
+    }
+}
+
+// Sahifa yuklanganda profilni ishga tushiramiz
+document.addEventListener("DOMContentLoaded", () => {
+    initializeProfile();
+    loadServerData(); // Keyingi qadamdagi funksiya
+});
+
 // ==========================================
 // CONFIG & INITIALIZATION
 // ==========================================
