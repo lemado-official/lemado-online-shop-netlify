@@ -552,7 +552,7 @@ function renderStoresHome() {
             // Ushbu bo'limda hamma do'konlar teng ko'rinadi
             allGrid.innerHTML = STORES.map(s => createStoreCardHTML(s, s.isVerified)).join('');
         }
-    }
+    
 }
 
 // Do'kon kartochkalarining HTML shabloni (Xatoliksiz toza versiya)
