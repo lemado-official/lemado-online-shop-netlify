@@ -1267,3 +1267,42 @@ async function submit100BallReview(storeId) {
         showToast("Server bilan aloqa uzildi.");
     }
 }
+
+// =======================================================
+// YAKUNIY ISHGA TUSHIRISH (Faqat bitta blokda)
+// =======================================================
+window.addEventListener('load', async () => {
+    console.log("Lemado platformasi ishga tushdi...");
+    
+    // 1. Avvaldan saqlangan foydalanuvchi sessiyasini tekshirish
+    const savedUser = localStorage.getItem('lemado_user');
+    if (savedUser) {
+        try {
+            setCurrentUser(JSON.parse(savedUser));
+        } catch(e) {
+            localStorage.removeItem('lemado_user');
+        }
+    }
+
+    // 2. Serverdan ma'lumotlarni yuklash va sahifani chizish
+    await loadServerData();
+    
+    // 3. Yuklanish ekranini yopish
+    if (typeof hideLoading === 'function') {
+        hideLoading();
+    } else {
+        const loader = document.getElementById('loading-screen');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 500);
+        }
+    }
+
+    // 4. Ekran bo'ylab ixtiyoriy joy bosilganda ochiq qolgan profil menyusini avtomat yopish
+    window.addEventListener('click', () => {
+        const profileWrap = document.getElementById('user-profile-wrap');
+        if (profileWrap) {
+            profileWrap.classList.remove('open');
+        }
+    });
+});
