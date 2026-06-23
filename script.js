@@ -488,41 +488,28 @@ function viewProduct(id) {
 // 🏪 DO'KONLARNI FILTRLASH VA EKRAUGA CHIZISH TIZIMI (TOZA VARIANT)
 // =======================================================
 function renderStoresHome() {
-    // 1. DOM elementlarni funksiya ichida aniq qidiramiz
+    // HTML'dagi ID'lar bilan moslashtirildi
     const officialGrid = document.getElementById('stores-grid-home');
-    const allGrid = document.getElementById('stores-grid-all');
+    const allGrid = document.getElementById('all-stores-grid'); // Siz aytgan ID
 
-    // Agar bu sahifada bu elementlar bo'lmasa, funksiya xatosiz chiqib ketadi
-    if (!officialGrid) {
-        console.warn("DIQQAT: 'stores-grid-home' elementi topilmadi!");
-        return;
-    }
-
-    console.log("Do'konlarni chizish boshlandi. Jami do'konlar soni:", STORES.length);
-
-    // 2. Ma'lumotlarni filtrlash (statusi 'active' bo'lganlar)
+    // Ma'lumotlarni filtrlash
     const activeStores = STORES.filter(s => s.status === 'active');
-    
-    // 3. Rasmiy do'konlar (status='active' VA isVerified=true)
     const verifiedStores = activeStores.filter(s => s.isVerified === true);
 
-    // 4. "Rasmiy Do'konlar" bo'limini to'ldirish
-    if (verifiedStores.length > 0) {
-        officialGrid.innerHTML = verifiedStores.map(s => createStoreCardHTML(s, true)).join('');
-    } else {
-        officialGrid.innerHTML = `<p style="padding:20px; text-align:center;">Hozircha rasmiy do'konlar mavjud emas.</p>`;
+    // 1. Rasmiy do'konlar (Home qismi)
+    if (officialGrid) {
+        officialGrid.innerHTML = verifiedStores.length > 0 
+            ? verifiedStores.map(s => createStoreCardHTML(s, true)).join('')
+            : `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha rasmiy do'konlar mavjud emas.</div>`;
     }
 
-    // 5. "Barcha Do'konlar" bo'limini to'ldirish
+    // 2. Barcha faol do'konlar (All qismi)
     if (allGrid) {
-        if (activeStores.length > 0) {
-            allGrid.innerHTML = activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('');
-        } else {
-            allGrid.innerHTML = `<p style="padding:20px; text-align:center;">Hozircha faol do'konlar mavjud emas.</p>`;
-        }
+        allGrid.innerHTML = activeStores.length > 0 
+            ? activeStores.map(s => createStoreCardHTML(s, s.isVerified)).join('')
+            : `<div style="grid-column:1/-1; padding:20px; text-align:center;">Hozircha faol do'konlar mavjud emas.</div>`;
     }
 }
-
     
 
     
