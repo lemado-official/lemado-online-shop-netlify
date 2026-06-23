@@ -271,5 +271,23 @@ app.get('/api/products', async (req, res) => {
 });
 
 
+// Do'konni tasdiqlash (Pending -> Active)
+app.put('/api/admin/stores/:id/approve', async (req, res) => {
+    try {
+        const store = await Store.findByIdAndUpdate(req.params.id, { status: 'active' }, { new: true });
+        res.json({ success: true, store });
+    } catch (err) { res.status(500).json({ error: "Xatolik" }); }
+});
+
+// Rasmiy qilish (Toggle isVerified)
+app.put('/api/admin/stores/:id/toggle-verify', async (req, res) => {
+    try {
+        const store = await Store.findById(req.params.id);
+        store.isVerified = !store.isVerified;
+        await store.save();
+        res.json({ success: true, store });
+    } catch (err) { res.status(500).json({ error: "Xatolik" }); }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server ${PORT}-portda gupirib ishlayapti...`));
