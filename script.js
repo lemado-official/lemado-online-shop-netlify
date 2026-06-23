@@ -1116,6 +1116,7 @@ async function loadServerData() {
     } catch (error) {
         console.warn("Server xatosi:", error.message);
         return false; // Yuklanmadi
+        updateMainStoreButtonUI(); // <--- SHU QATORNI QO'SHASIZ
     }
 }
 
@@ -1125,8 +1126,12 @@ function hideLoading() {
     if (ls) {
         ls.style.opacity = '0';
         setTimeout(() => { ls.style.display = 'none'; }, 500);
+    
+        
     }
 }
+
+
 
 // =======================================================
 // YAKUNIY ISHGA TUSHIRISH (Eng oxirgi qatorga shu qo'yiladi)
