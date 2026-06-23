@@ -55,19 +55,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 // ----------------------------------------------------
 // Serverdan ma'lumot olish funksiyasi (try-catch bilan xavfsiz qilingan)
-async function loadServerData() {
-    try {
-        const response = await fetch(`${API_URL}/products`);
-        if (!response.ok) throw new Error("Serverdan javob kelmadi");
-        const data = await response.json();
-        
-        // Ma'lumotlarni o'zgaruvchilarga yozib olish
-        PRODUCTS = data.products || data; 
-        console.log("Ma'lumotlar muvaffaqiyatli yuklandi!");
-    } catch (err) {
-        console.error("Yuklashda xatolik:", err);
-    }
-}
+
 // ==========================================================
 // BARCHA KODNI SHU QOLIBGA SOLING (Bu xatolarni yo'q qiladi)
 // ==========================================================
@@ -89,19 +77,47 @@ window.addEventListener('load', async () => {
     console.log("Loading muvaffaqiyatli yopildi.");
 });
 
-// 3. Serverdan ma'lumot olish funksiyasi (Alohida joylashgan)
+// UNIVERSAL YUKLASH TIZIMI (Faqat bitta bo'lishi shart!)
 async function loadServerData() {
+    const tagline = document.querySelector('.tagline');
     try {
-        const response = await fetch(`${API_URL}/products`);
-        if (!response.ok) throw new Error("Server xatosi");
-        const data = await response.json();
-        
-        // Agar sizda render funksiyasi bo'lsa, uni shu yerda chaqiring
-        if (typeof renderAdminProductsTable === 'function') {
-            renderAdminProductsTable(data.products || data);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 soniya kutish
+
+        // Mahsulotlar va do'konlarni parallel ravishda tortib kelamiz
+        const [productsResponse, storesResponse] = await Promise.all([
+            fetch(`${API_URL}/products`, { signal: controller.signal }),
+            fetch(`${API_URL}/stores`, { signal: controller.signal }).catch(err => {
+                console.warn("Do'konlarni yuklashda xatolik:", err);
+                return null;
+            })
+        ]);
+
+        clearTimeout(timeoutId);
+
+        // 1. Mahsulotlarni yozib olamiz
+        if (productsResponse && productsResponse.ok) {
+            const prodData = await productsResponse.json();
+            PRODUCTS = prodData.products || prodData;
         }
-    } catch (err) {
-        console.error("Serverdan ma'lumot olishda xatolik:", err);
+
+        // 2. Do'konlarni yozib olamiz (Endi oddiy userda ham do'konlar yuklanadi!)
+        if (storesResponse && storesResponse.ok) {
+            const storeData = await storesResponse.json();
+            STORES = storeData.stores || storeData;
+            console.log("Do'konlar va Mahsulotlar muvaffaqiyatli yuklandi!");
+        }
+        
+        // 3. Ma'lumotlar kelganidan keyin UI tugmalarni yangilaymiz
+        updateMainStoreButtonUI();
+        
+        if (tagline) tagline.innerText = "Xush kelibsiz!";
+        return true;
+    } catch (error) {
+        console.warn("Server xatosi yoki vaqt tugadi:", error.message);
+        if (tagline) tagline.innerText = "Server uyg'onmoqda, ozgina kuting...";
+        updateMainStoreButtonUI();
+        return false;
     }
 }
 
@@ -600,17 +616,22 @@ function renderMyStore() {
   }
   const storeId = store._id || store.id;
   const prods = PRODUCTS.filter(p => p.storeId === storeId);
+  
   c.innerHTML = `
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;">
       <div style="width:70px;height:70px;border-radius:16px;background:var(--red-light);display:flex;align-items:center;justify-content:center;font-size:32px">
         ${store.logo ? `<img src="${sanitize(store.logo)}" style="width:70px;height:70px;border-radius:16px;object-fit:cover" onerror="this.parentElement.innerHTML='🏪'">` : '🏪'}
       </div>
       <div>
         <h2 style="font-size:24px;font-weight:800">${sanitize(store.name)}</h2>
-        <div>${store.isVerified ? '<span class="verified-store">✓ Rasmiy do\'kon</span>' : '<span class="tag tag-orange">⏳ Tekshirilmoqda</span>'}</div>
+        <div>${store.isVerified ? '<span class="verified-store">✓ Rasmiy do\'kon (Siz Super Admisiz)</span>' : '<span class="tag tag-orange">⏳ Tekshirilmoqda</span>'}</div>
       </div>
-      <button class="btn btn-red" style="margin-left:auto" onclick="openModal('product-modal')">+ Mahsulot qo'shish</button>
+      <div style="margin-left:auto; display:flex; gap:10px;">
+        <button class="btn" style="background:#ff9800; color:white;" onclick="openEditStoreModal('${storeId}')">⚙️ Do'konni tahrirlash</button>
+        <button class="btn btn-red" onclick="openModal('product-modal')">+ Mahsulot qo'shish</button>
+      </div>
     </div>
+    
     <div class="section-title">Mahsulotlarim (${prods.length})</div>
     <div class="products-grid">
       ${prods.map(p => `
@@ -623,6 +644,12 @@ function renderMyStore() {
         </div>`).join('') || '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-400)">Hali mahsulot qo\'shilmagan</div>'}
     </div>
   `;
+}
+
+// Vaqtincha tahrirlash oynasi funksiyasi
+function openEditStoreModal(storeId) {
+    showToast("Do'kon tahrirlash funksiyasi yaqin orada ishga tushadi!");
+    // Bu yerda tahrirlash modalini ochish kodingizni yozishingiz mumkin
 }
 
 // MAHSULOTNI BAZAGA SAQLASH (YANGI FETCH)
@@ -1125,32 +1152,7 @@ setTimeout(() => {
 
 
 
-async function loadServerData() {
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 25000); 
 
-        const response = await fetch(`${API_URL}/products`, { signal: controller.signal });
-        clearTimeout(timeoutId);
-
-        if (!response.ok) throw new Error("Serverdan ma'lumot kelmadi");
-        
-        const data = await response.json();
-        PRODUCTS = data.products || data; 
-        console.log("Ma'lumotlar muvaffaqiyatli yuklandi!");
-        
-        // SHU QATOR QO'SHILDI: Ma'lumotlar kelgach tugmani yangilash
-        updateMainStoreButtonUI();
-        
-        return true; 
-    } catch (error) {
-        console.warn("Server xatosi:", error.message);
-        
-        // TO'G'RILANDI: return buyrug'idan oldin yozildi
-        updateMainStoreButtonUI(); 
-        return false; 
-    }
-}
 
 
 
@@ -1194,29 +1196,29 @@ window.addEventListener('load', async () => {
 // DO'KON TUGMASINI DINAMIK BOSHQARISH
 // =======================================================
 
-// 1. Tugma bosilganda qayerga olib borishni hal qiluvchi funksiya
+// 1. Tugma bosilganda nima bo'lishini boshqarish
 function handleMainStoreBtn() {
     if (!currentUser) {
-        alert("Do'kon ochish uchun avval tizimga kiring!");
-        // Agar sizda login modali bo'lsa, bu yerda o'shani ochish kodini qo'ying:
-        // openModal('login-modal');
+        showToast("Do'kon ochish uchun avval tizimga kiring!");
+        openModal('login-modal');
         return;
     }
 
-    // Do'konlar ro'yxatidan userning do'konini qidiramiz
+    // Global STORES ichidan userning do'konini izlaymiz
     const userStore = STORES.find(s => s.owner === currentUser.username);
 
     if (userStore) {
-        // Agar do'koni bor bo'lsa, Do'konim panelini ochamiz (oldingi qadamda yozgan funksiyamiz)
-        openMyStorePanel();
+        if (userStore.isVerified) {
+            showPage('my-store'); // Tasdiqlangan bo'lsa "My Store" sahifasiga o'tadi
+        } else {
+            showToast("⏳ Do'koningiz hali admin tomonidan tasdiqlanmagan!");
+        }
     } else {
-        // Agar do'koni yo'q bo'lsa, do'kon yaratish modalini ochamiz
-        // DIQQAT: 'store-modal' o'rniga o'zingizning do'kon ochadigan html formangiz ID sini yozing
-        openModal('store-modal'); 
+        openModal('store-modal'); // Do'koni bo'lmasa yaratish oynasi ochiladi
     }
 }
 
-// 2. Sahifa yuklanganda yoki ma'lumot kelganda tugma yozuvini o'zgartiruvchi funksiya
+// 2. Tugma matni va holatini dinamik o'zgartirish
 function updateMainStoreButtonUI() {
     const btn = document.getElementById('main-store-btn');
     if (!btn) return;
@@ -1225,18 +1227,91 @@ function updateMainStoreButtonUI() {
         const userStore = STORES.find(s => s.owner === currentUser.username);
         
         if (userStore) {
-            // Userning do'koni bor! Tugmani yashil (yoki boshqa rang) qilib, yozuvini o'zgartiramiz
             if (userStore.isVerified) {
                 btn.innerHTML = "🏪 Do'konimga kirish";
+                btn.style.background = "var(--green, #28a745)"; // Aktiv do'kon rangi
             } else {
                 btn.innerHTML = "⏳ Do'konim (Tekshirilmoqda)";
+                btn.style.background = "var(--orange, #ff9800)"; // Kutilayotgan do'kon rangi
             }
         } else {
-            // User login qilgan, lekin do'koni yo'q
             btn.innerHTML = "Do'kon ochish 🏪";
         }
     } else {
-        // Mehmon (login qilmagan)
         btn.innerHTML = "Do'kon ochish 🏪";
+    }
+    
+    // Tugma bosilganda tepadagi handle funksiyasini chaqiramiz
+    btn.onclick = handleMainStoreBtn;
+}
+
+// DO'KON ICHIGA KIRGANDA SHARHLARNI VA 100 BALLIK SISTEMANI CHIZISH
+function renderStoreReviewsSection(storeId) {
+    const targetElement = document.getElementById('store-reviews-container'); // HTML dagi joylashadigan blok IDsi
+    if (!targetElement) return;
+
+    targetElement.innerHTML = `
+        <div class="review-box" style="padding:20px; background:#fdfdfd; border:1px solid #eee; border-radius:12px; margin-top:20px;">
+            <h3 style="margin-bottom:5px;">Lemado Reyting tizimi</h3>
+            <p style="font-size:13px; color:#777; margin-bottom:15px;">Do'kon faoliyatini 1 dan 100 gacha bo'lgan ball tizimida baholang (Yulduzchalarsiz!):</p>
+            
+            <div style="margin-bottom:15px;">
+                <label style="font-weight:bold; display:block; margin-bottom:5px;">
+                    Sizning bahoingiz: <span id="live-score" style="color:#e91e63; font-size:20px; font-weight:bold;">50</span> / 100
+                </label>
+                <input type="range" id="score-slider" min="1" max="100" value="50" style="width:100%; cursor:pointer;"
+                       oninput="document.getElementById('live-score').innerText = this.value">
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <textarea id="review-comment" rows="3" placeholder="Do'kon haqida izoh qoldiring..." style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; font-family:inherit;"></textarea>
+            </div>
+
+            <button onclick="submit100BallReview('${storeId}')" style="background:#00bcd4; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:bold;">
+                Baho va Sharhni Yuborish
+            </button>
+        </div>
+    `;
+}
+
+// SHARHNI BACKENDGA YUBORISH
+async function submit100BallReview(storeId) {
+    if (!currentUser) {
+        showToast("⚠️ Sharh yozish uchun avval tizimga kiring.");
+        openModal('login-modal');
+        return;
+    }
+
+    const score = parseInt(document.getElementById('score-slider').value);
+    const comment = document.getElementById('review-comment').value.trim();
+
+    if (!comment) {
+        showToast("Iltimos, do'kon haqida biror fikr yozing.");
+        return;
+    }
+
+    const reviewPayload = {
+        username: currentUser.username,
+        score: score, // 100 ballik baho
+        text: comment,
+        date: new Date().toISOString()
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/stores/${storeId}/reviews`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reviewPayload)
+        });
+
+        if (response.ok) {
+            showToast("✓ Bahoingiz va sharhingiz saqlandi!");
+            document.getElementById('review-comment').value = '';
+            // Bu yerda do'kon sahifasini qayta yuklatish mumkin
+        } else {
+            showToast("Sharhni saqlashda xatolik yuz berdi.");
+        }
+    } catch (err) {
+        showToast("Server bilan aloqa uzildi.");
     }
 }
