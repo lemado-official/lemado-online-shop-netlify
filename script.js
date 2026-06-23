@@ -1441,3 +1441,49 @@ window.addEventListener('load', async () => {
         }
     });
 });
+
+// ADMIN PANEL: Do'konlar jadvalini chizish va tugmalarni boshqarish
+function renderAdminStoresTable() {
+    const tableBody = document.getElementById('stores-table');
+    if (!tableBody) return; // Agar sahifada bu jadval bo'lmasa, kod xato bermaydi
+
+    tableBody.innerHTML = STORES.map(s => {
+        return `
+            <tr>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.owner}</td>
+                <td>${s.category || 'Noma\'lum'}</td>
+                <td>
+                    <span class="status-badge">${s.status === 'active' ? '✅ Faol' : '⏳ Kutilmoqda'}</span>
+                </td>
+                <td>
+                    ${s.status === 'pending' 
+                        ? `<button onclick="adminApprove('${s._id}')" style="background:#28a745; color:white; padding:5px; border:none; border-radius:4px;">Aktivlashtirish</button>` 
+                        : `<button onclick="adminToggleVerify('${s._id}')" style="background:${s.isVerified ? '#ffc107' : '#007bff'}; color:white; padding:5px; border:none; border-radius:4px;">
+                            ${s.isVerified ? '✓ Rasmiy' : 'Rasmiy qilish'}
+                           </button>`
+                    }
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Bular esa tugmalar bosilganda ishlaydigan API so'rovlari:
+async function adminApprove(storeId) {
+    const res = await fetch(`${API_URL}/admin/stores/${storeId}/approve`, { method: 'PUT' });
+    if (res.ok) {
+        alert("Do'kon aktivlashtirildi!");
+        await loadServerData(); // Ma'lumotlarni yangilaymiz
+        renderAdminStoresTable(); // Jadvalni yangilaymiz
+    }
+}
+
+async function adminToggleVerify(storeId) {
+    const res = await fetch(`${API_URL}/admin/stores/${storeId}/toggle-verify`, { method: 'PUT' });
+    if (res.ok) {
+        alert("Rasmiy maqomi o'zgartirildi!");
+        await loadServerData();
+        renderAdminStoresTable();
+    }
+}
