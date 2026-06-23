@@ -480,11 +480,93 @@ function viewProduct(id) {
 // ==========================================
 // STORES LOGIC
 // ==========================================
+// =======================================================
+// 🏪 DO'KONLARNI FILTRLASH VA EKRAUGA CHIZISH TIZIMI
+// =======================================================
 function renderStoresHome() {
-  const grid = document.getElementById('stores-grid-home');
-  if (!grid) return;
-  const verified = STORES.filter(s => s.isVerified).slice(0, 6);
-  grid.innerHTML = verified.map(storeCard).join('');
+    const officialGrid = document.getElementById('stores-grid-home');
+    if (!officialGrid) return;
+
+    // 1. Faqat admin tomonidan tasdiqlangan do'konlar (isVerified === true)
+    const verifiedStores = STORES.filter(s => s.isVerified === true);
+
+    // Rasmiy do'konlar qismini chizamiz
+    if (verifiedStores.length === 0) {
+        officialGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; color: var(--gray-500); padding: 24px; font-size: 14px; background: var(--gray-50); border-radius: var(--radius); border: 1px dashed var(--gray-300);">
+                🔒 Hozircha rasmiy tasdiqlangan do'konlar mavjud emas. Admin tekshiruvidan so'ng shu yerda e'lon qilinadi.
+            </div>`;
+    } else {
+        officialGrid.innerHTML = verifiedStores.map(s => createStoreCardHTML(s, true)).join('');
+    }
+
+    // 2. YANGI BO'LIM: "Yangi va Faol Do'konlar" (Hamma yangi ochilgan do'konlar chiqadigan joy)
+    let allStoresSection = document.getElementById('all-stores-section-wrapper');
+    
+    // Agar HTML ichida bu yangi bo'lim hali mavjud bo'lmasa, uni dinamik ravishda yaratamiz
+    if (!allStoresSection) {
+        const officialSection = officialGrid.closest('.section');
+        if (officialSection) {
+            allStoresSection = document.createElement('div');
+            allStoresSection.id = 'all-stores-section-wrapper';
+            allStoresSection.className = 'section';
+            allStoresSection.innerHTML = `
+                <div class="section-title" style="margin-top: 40px;">Yangi va Faol Do'konlar 🛍️</div>
+                <div class="stores-grid" id="stores-grid-all"></div>
+            `;
+            // Rasmiy do'konlar bo'limining aynan tagidan joylashtiramiz
+            officialSection.parentNode.insertBefore(allStoresSection, officialSection.nextSibling);
+        }
+    }
+
+    // Yangi ochilgan barcha do'konlar gridini to'ldiramiz
+    const allGrid = document.getElementById('stores-grid-all');
+    if (allGrid) {
+        if (STORES.length === 0) {
+            allGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; color: var(--gray-400); padding: 20px;">
+                    Hozircha platformada birorta ham do'kon ochilmagan.
+                </div>`;
+        } else {
+            // Ushbu bo'limda hamma do'konlar (tasdiqlangan va tasdiqlanmaganlar) teng ko'rinadi
+            allGrid.innerHTML = STORES.map(s => createStoreCardHTML(s, s.isVerified)).join('');
+        }
+    }
+}
+
+// Do'kon kartochkalarining HTML shabloni (Chiroyli premium dizayn)
+function createStoreCardHTML(s, isOfficial) {
+    const storeId = s._id || s.id;
+    const fallbackLogo = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--gray-100); font-size:28px;">🏪</div>`;
+    
+    return `
+        <div class="store-card" onclick="handleStoreClick('${storeId}')" style="cursor:pointer; background:var(--white); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); transition:var(--transition); display:flex; align-items:center; gap:16px; border:1px solid var(--gray-100);">
+            <div style="width:60px; height:60px; border-radius:12px; overflow:hidden; background:var(--gray-50); flex-shrink:0; display:flex; align-items:center; justify-content:center; border: 1px solid var(--gray-200);">
+                ${s.logo ? `<img src="${sanitize(s.logo)}" alt="${sanitize(s.name)}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='🏪'">` : fallbackLogo}
+            </div>
+            <div style="flex-grow:1; min-width:0;">
+                <h4 style="margin:0 0 4px 0; font-size:16px; font-weight:700; color:var(--gray-900); display:flex; align-items:center; gap:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${sanitize(s.name)} 
+                    ${isOfficial ? '<span title="Rasmiy Tasdiqlangan Do\'kon" style="color:#28a745; font-size:14px; font-weight:bold;">✓</span>' : ''}
+                </h4>
+                <p style="margin:0; font-size:13px; color:var(--gray-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${sanitize(s.category || "Umumiy do'kon")}
+                </p>
+            </div>
+        </div>
+    `;
+}
+
+// Do'kon kartochkasi bosilganda do'kon sahifasini ochish mantiqi
+function handleStoreClick(storeId) {
+    const store = STORES.find(s => (s._id || s.id) === storeId);
+    if (!store) return;
+    
+    showToast(`🏪 ${store.name} do'koniga xush kelibsiz!`);
+    
+    // Kelajakda do'kon ichiga kirganda uning mahsulotlarini ko'rsatish uchun:
+    // currentStoreId = storeId;
+    // showPage('store-detail'); 
 }
 
 function renderAllStores() {
