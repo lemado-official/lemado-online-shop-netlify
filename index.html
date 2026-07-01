@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+    
+    <title>uLemdo Browser</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="portal-container">
+        <header class="portal-header">
+            <h1 class="brand-logo">uLemdo <span>Hub</span></h1>
+            <div id="digital-clock" class="widget-clock">00:00</div>
+            <button id="login-btn" class="btn-primary" onclick="openModal()">Kirish</button>
+        </header>
+
+        <section class="search-section">
+            <form action="https://www.google.com/search" method="GET" target="_blank" class="search-form">
+                <input type="text" name="q" placeholder="uLemdo orqali xavfsiz qidiruv..." autocomplete="off" required>
+                <button type="submit">Qidirish</button>
+            </form>
+        </section>
+
+        <footer class="status-bar">
+            <div class="secure-badge">🛡️ Purple Team xavfsizlik rejimi faol</div>
+            <div id="electron-ver" class="version-text">Yuklanmoqda...</div>
+        </footer>
+    </div>
+
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>uLemdo Akkaunt</h2>
+            <form id="auth-form">
+                <input type="email" placeholder="username@ulemdo.uz" required>
+                <input type="password" placeholder="Parol" required>
+                <button type="submit" class="btn-primary full-width">Kirish</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
