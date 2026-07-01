@@ -1,0 +1,164 @@
+:root {
+    --bg-dark: #0A1128;       /* Logotipning to'q ko'k foni */
+    --bg-card: #111C40;       /* Komponentlar uchun ochroq ko'k */
+    --accent-orange: #FF5A16; /* Logotipdagi yorqin to'q sariq */
+    --text-white: #FFFFFF;    /* Oq rang */
+    --text-gray: #8F9CAE;
+    --radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: var(--bg-card);
+    border-bottom: 2px solid var(--accent-orange);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.logo-u {
+    color: var(--accent-orange);
+    border: 2px solid var(--accent-orange);
+    padding: 0 8px;
+    margin-right: 4px;
+    border-radius: 4px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-link {
+    background: none;
+    border: none;
+    color: var(--text-white);
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: var(--accent-orange);
+}
+
+/* BUTTONS */
+.btn {
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-orange {
+    background-color: var(--accent-orange);
+    color: var(--text-white);
+}
+
+.btn-orange:hover {
+    opacity: 0.9;
+    box-shadow: 0 0 15px var(--accent-orange);
+}
+
+.btn-block { width: 100%; }
+
+/* GRIDS & CARDS */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.product-card, .store-card {
+    background-color: var(--bg-card);
+    border: 1px solid #1E2D5A;
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.product-card:hover, .store-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-orange);
+}
+
+.placeholder-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+/* MODAL */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(10, 17, 40, 0.8);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    padding: 30px;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid var(--accent-orange);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-gray);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-dark);
+    border: 1px solid #1E2D5A;
+    border-radius: var(--radius);
+    color: white;
+}
+
+.form-group input:focus {
+    border-color: var(--accent-orange);
+    outline: none;
+}
+
+.hidden { display: none !important; }
