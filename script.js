@@ -2,6 +2,14 @@ import { createApp } from 'https://unpkg.com/vue@3.0.11/dist/vue.esm-browser.pro
 import { lerp, BufferGeometry, Camera, EffectComposer, Points, Renderer, RenderPass, Scene, ShaderMaterial, Texture, UnrealBloomPass, ZoomBlurPass } from 'https://unpkg.com/troisjs@0.3.0-beta.4/build/trois.module.cdn.min.js'
 import { Clock, Color, MathUtils, Vector3 } from 'https://unpkg.com/three@0.127.0/build/three.module.js'
 
+// 🎨 FIX: Kod sinib qolmasligi uchun niceColors massivini qo'shamiz (Ulemdo va kiberpunk ranglari)
+const niceColors = [
+  ['#0A1128', '#111C40', '#FF5A16', '#FFFFFF', '#FF7A45'], // 0: Ulemdo Asosiy
+  ['#050505', '#1F1F1F', '#FF0055', '#00FFCC', '#FFFFFF'], // 1: Cyberpunk Neon
+  ['#222831', '#393E46', '#00ADB5', '#EEEEEE', '#FFD369'], // 2: Dark Tech
+  ['#1A1A2E', '#16213E', '#E94560', '#0F3460', '#FFFFFF']  // 3: Deep Matrix
+];
+
 const { randFloat: rnd, randInt, randFloatSpread: rndFS } = MathUtils
 
 // SHADERS
@@ -51,8 +59,8 @@ createApp({
   components: { BufferGeometry, Camera, EffectComposer, Points, Renderer, RenderPass, Scene, ShaderMaterial, Texture, UnrealBloomPass, ZoomBlurPass },
   setup() {
     const POINTS_COUNT = 40000
-    // ULEMDO BRANDING COLOR PALETTE (Neon Orange and Pure White)
-    const ulemdoPalette = ['#FF5A16', '#FFFFFF', '#FF7A45', '#E2E8F0']
+    // Fix qilingan massivdan foydalanamiz
+    const palette = niceColors[0] 
 
     const positions = new Float32Array(POINTS_COUNT * 3)
     const colors = new Float32Array(POINTS_COUNT * 3)
@@ -62,7 +70,7 @@ createApp({
     for (let i = 0; i < POINTS_COUNT; i++) {
       v3.set(rndFS(200), rndFS(200), rndFS(300))
       v3.toArray(positions, i * 3)
-      color.set(ulemdoPalette[Math.floor(rnd(0, ulemdoPalette.length))])
+      color.set(palette[Math.floor(rnd(0, palette.length))])
       color.toArray(colors, i * 3)
       sizes[i] = rnd(4, 15)
     }
@@ -99,16 +107,17 @@ createApp({
   methods: {
     enterSystem() {
       // 3D canvas va portal tugmasini vizual o'chirish
-      document.querySelector('canvas').style.display = 'none';
-      document.querySelector('.gateway-btn').style.display = 'none';
+      if(document.querySelector('canvas')) document.querySelector('canvas').style.display = 'none';
+      if(document.querySelector('.gateway-btn')) document.querySelector('.gateway-btn').style.display = 'none';
       
       // Haqiqiy xavfsiz veb-saytni yuklash va ko'rsatish
       const coreSite = document.getElementById('ulemdo-core-site');
-      coreSite.classList.remove('system-hidden');
-      coreSite.style.opacity = '1';
-      coreSite.style.transform = 'scale(1)';
+      if (coreSite) {
+         coreSite.classList.remove('system-hidden');
+         coreSite.style.opacity = '1';
+         coreSite.style.transform = 'scale(1)';
+      }
       
-      // Global sayt dasturlarini ishga tushirish
       initializeCoreStore();
     }
   }
@@ -117,22 +126,21 @@ createApp({
 // ========================================================
 // 🛡️ ULEMDO CORE SECURITY & DATA APPLICATION LOGIC
 // ========================================================
-function escapeHTML(str) {
-    if (!str) return '';
-    return str.replace(/[&<>"']/g, match => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'
-    })[match]);
-}
-
 window.showPage = function(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-    document.getElementById(`page-${pageId}`).classList.remove('hidden');
+    const targetPage = document.getElementById(`page-${pageId}`);
+    if(targetPage) targetPage.classList.remove('hidden');
 }
 
-window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); }
-window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); }
+window.openModal = function(id) { 
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.remove('hidden'); 
+}
+window.closeModal = function(id) { 
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.add('hidden'); 
+}
 
 function initializeCoreStore() {
     console.log("Ulemdo Core xavfsiz muhiti yuklandi... 🛰️");
-    // Bu yerda serveringizdan do'konlar va mahsulotlarni yuklash funksiyalarini chaqirishingiz mumkin
 }
