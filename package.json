@@ -1,8 +1,0 @@
-{
-  "name": "ulemdo-portal",
-  "version": "1.0.0",
-  "description": "uLemdo Browser Web Portal",
-  "scripts": {
-    "start": "echo 'No build step needed for static portal' && exit 0"
-  }
-}
