@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ulemdo — Admin panel</title>
+<link rel="stylesheet" href="../css/style.css" />
+<style>
+  .admin-wrap { max-width: 1000px; margin: 0 auto; padding: 28px 20px 60px; }
+  .admin-top { display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .admin-title { font-size: 1.4rem; font-weight: 800; }
+  table { width: 100%; border-collapse: collapse; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; font-size: 0.86rem; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-dim); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.06em; background: var(--bg-soft); }
+  tr:last-child td { border-bottom: none; }
+  .row-actions { display: flex; gap: 8px; }
+  .row-actions button { padding: 6px 10px; font-size: 0.78rem; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); }
+  .row-actions button:hover { border-color: var(--orange); color: var(--orange); }
+  .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+  .status-on { background:#37d67a; } .status-off { background:#ff6060; }
+  .table-wrap { overflow-x: auto; }
+  .guard { text-align:center; padding: 80px 20px; }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:560px){ .two-col{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <svg class="brand-logo" viewBox="0 0 1270 1270" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1270" height="1270" rx="220" fill="#0f1729"/>
+      <path d="M310 200 H460 V850 C460 910 510 960 570 960 H700 C760 960 810 910 810 850 V200 H960 V850 C960 992 845 1105 700 1105 H570 C425 1105 310 992 310 850 Z" fill="#ff6b35"/>
+      <circle cx="635" cy="635" r="200" fill="#ffffff"/>
+      <path d="M635 490 L790 660 L730 660 L635 555 L540 660 L480 660 Z" fill="#0f1729"/>
+    </svg>
+    <span class="brand-name">Ulem<span>do</span> · Admin</span>
+  </div>
+  <div class="header-actions">
+    <a class="btn" href="/">← Saytga qaytish</a>
+  </div>
+</header>
+
+<div id="guard" class="guard">
+  <p>Yuklanmoqda...</p>
+</div>
+
+<div class="admin-wrap hidden" id="adminContent">
+  <div class="admin-top">
+    <div class="admin-title">Saytlar katalogi</div>
+    <button class="btn btn-primary" id="addBtn">+ Yangi sayt qo'shish</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Holat</th><th>Ikon</th><th>Nomi</th><th>Kategoriya</th><th>URL</th><th>Kliklar</th><th>Amallar</th></tr>
+      </thead>
+      <tbody id="siteTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SAYT QO'SHISH/TAHRIRLASH MODAL -->
+<div class="overlay" id="siteOverlay">
+  <div class="modal relative" style="max-width:460px">
+    <button class="modal-close" data-close="siteOverlay">×</button>
+    <h2 id="siteModalTitle">Yangi sayt</h2>
+    <p class="sub">Katalogga qo'shiladigan xizmat ma'lumotlari</p>
+    <div class="form-error" id="siteFormError"></div>
+    <form id="siteForm">
+      <input type="hidden" id="siteId" />
+      <div class="field"><label>Nomi</label><input type="text" id="siteName" required maxlength="60" /></div>
+      <div class="field"><label>URL (https:// bilan)</label><input type="url" id="siteUrl" required placeholder="https://example.com" /></div>
+      <div class="field"><label>Tavsif</label><textarea id="siteDesc" maxlength="200"></textarea></div>
+      <div class="two-col">
+        <div class="field"><label>Kategoriya</label><input type="text" id="siteCategory" placeholder="Umumiy" /></div>
+        <div class="field"><label>Ikon (emoji)</label><input type="text" id="siteIcon" placeholder="🌐" /></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Aksent rang</label><input type="color" id="siteColor" value="#ff6b35" /></div>
+        <div class="field">
+          <label>Iframe'da ochilsinmi?</label>
+          <select id="siteAllowIframe">
+            <option value="true">Ha</option>
+            <option value="false">Yo'q (yangi oynada)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="statusField" style="display:none">
+        <label>Holati</label>
+        <select id="siteIsActive">
+          <option value="true">Faol</option>
+          <option value="false">Nofaol</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%">Saqlash</button>
+    </form>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
