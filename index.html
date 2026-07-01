@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ulemdo - Cinematic Space Portal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05050c;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Canvas to'liq ekranni qoplaydi */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Markazdagi konteyner va tugma */
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            transition: opacity 1s ease;
+        }
+
+        .ulemdo-btn {
+            background: radial-gradient(circle, #1a1a3a 0%, #0a0a1a 100%);
+            color: #ffffff;
+            border: 2px solid #3a3a78;
+            padding: 20px 50px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(58, 58, 120, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ulemdo-btn:hover {
+            border-color: #5c5cff;
+            box-shadow: 0 0 35px rgba(92, 92, 255, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.2);
+            text-shadow: 0 0 10px #fff;
+            transform: scale(1.05);
+        }
+
+        /* Cinematic Chaqnash (Flash) effekti */
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .flash-active {
+            animation: cinematicFlash 1.5s forwards;
+        }
+
+        @keyframes cinematicFlash {
+            0% { opacity: 0; }
+            15% { opacity: 1; }
+            100% { opacity: 0; background-color: transparent; }
+        }
+
+        /* Ichki sahifa (Chaqnashdan keyin ochiladigan qism) */
+        .main-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            z-index: 5;
+            opacity: 0;
+            text-align: center;
+            transition: opacity 2s ease-in-out;
+            pointer-events: none;
+        }
+
+        .main-content.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .main-content h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 242, 254, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="spaceCanvas"></canvas>
+
+    <div class="container" id="portalContainer">
+        <button class="ulemdo-btn" id="activateBtn">Ulemdo</button>
+    </div>
+
+    <div class="flash-overlay" id="flash"></div>
+
+    <div class="main-content" id="mainContent">
+        <h1>ULEMDO KOSMOSIGA XUSH KELIBSIZ</h1>
+        <p>Tizim muvaffaqiyatli yuklandi. Cinematic sayt faol holatda.</p>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('spaceCanvas');
+        const ctx = canvas.getContext('2d');
+        const btn = document.getElementById('activateBtn');
+        const container = document.getElementById('portalContainer');
+        const flash = document.getElementById('flash');
+        const mainContent = document.getElementById('mainContent');
+
+        // Canvas o'lchamlarini sozlash
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // To'q va to'yingan tasodifiy ranglar generatori (Koinot nebula ranglari)
+        function getRandomDarkColor() {
+            const darkColors = [
+                'rgba(31, 12, 61, ',   // To'q binafsha
+                'rgba(9, 24, 69, ',    // To'q ko'k
+                'rgba(5, 40, 46, ',    // To'q to'tiqush rang
+                'rgba(46, 7, 39, ',    // To'q qizg'ish-binafsha
+                'rgba(14, 43, 29, '    // To'q yashil
+            ];
+            return darkColors[Math.floor(Math.random() * darkColors.length)];
+        }
+
+        // Yulduzlar massivi
+        const stars = [];
+        const numStars = 150;
+        let speedMultiplier = 1; // Yorug'lik tezligi uchun koeffitsient
+        let isWarping = false;
+
+        // Yulduz klassi
+        class Star {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = (Math.random() - 0.5) * canvas.width;
+                this.y = (Math.random() - 0.5) * canvas.height;
+                this.z = Math.random() * canvas.width; // Masofa
+                
+                // Har bir yulduz o'zining to'q rangiga ega
+                this.colorBase = getRandomDarkColor();
+                this.opacity = Math.random() * 0.5 + 0.5;
+            }
+
+            update() {
+                // Agar tugma bosilgan bo'lsa tezlik keskin oshadi (Warp speed)
+                this.z -= isWarping ? 35 : 1; 
+
+                // Yulduz ekrandan chiqib ketsa yoki juda yaqin kelsa qayta hosil bo'ladi
+                if (this.z <= 0) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                // 3D fazoni 2D ekranga proeksiyalash
+                const k = 128 / this.z;
+                const px = this.x * k + canvas.width / 2;
+                const py = this.y * k + canvas.height / 2;
+
+                if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                    // Masofaga qarab o'lcham o'zgarishi
+                    const size = (1 - this.z / canvas.width) * 6; 
+                    
+                    ctx.beginPath();
+                    if (isWarping) {
+                        // Yorug'lik tezligida chiziqlar (hyperdrive effekti) hosil bo'ladi
+                        const oldK = 128 / (this.z + 40);
+                        const ox = this.x * oldK + canvas.width / 2;
+                        const oy = this.y * oldK + canvas.height / 2;
+                        
+                        ctx.strokeStyle = `${this.colorBase}${this.opacity})`;
+                        ctx.lineWidth = size / 2;
+                        ctx.moveTo(px, py);
+                        ctx.lineTo(ox, oy);
+                        ctx.stroke();
+                    } else {
+                        // Oddiy holatda nuqtalar portlab turgandek miltillaydi
+                        ctx.fillStyle = `${this.colorBase}${this.opacity})`;
+                        ctx.arc(px, py, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+        }
+
+        // Yulduzlarni dastlabki to'ldirish
+        for (let i = 0; i < numStars; i++) {
+            stars.push(new Star());
+        }
+
+        // Animatsiya sikli
+        function animate() {
+            // To'q koinot foni effekti (harakatda quyruq qolishi uchun yengil tozalash)
+            ctx.fillStyle = isWarping ? 'rgba(5, 5, 12, 0.15)' : 'rgba(5, 5, 12, 1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Tugma bosilganda ishga tushadigan hodisa
+        btn.addEventListener('click', () => {
+            if (isWarping) return; // Ikki marta bosilishini oldini olish
+            
+            isWarping = true;
+            
+            // Markazdagi tugmani sekin yo'qotish
+            container.style.opacity = '0';
+            container.style.pointerEvents = 'none';
+
+            // 5 sekundlik yorug'lik tezligi sayohati
+            setTimeout(() => {
+                // Cinematic chaqnashni yoqish
+                flash.classList.add('flash-active');
+                
+                // Chaqnashning eng cho'qqisida (0.2 soniyadan keyin) fonni o'zgartirish va kontentni chiqarish
+                setTimeout(() => {
+                    isWarping = false;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvas.style.display = 'none'; // Canvasni yashirish yoki saqlab qolish mumkin
+                    mainContent.classList.add('show');
+                    document.body.style.backgroundColor = '#000000'; // Yakuniy toza qora fon
+                }, 200);
+
+            }, 5000); // 5000 millisekund = 5 sekund
+        });
+    </script>
+</body>
+</html>
