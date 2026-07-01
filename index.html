@@ -1,396 +1,79 @@
-
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<link rel="stylesheet" href="style.css">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lemado</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uLemado Hub - Nexus Portal</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="loading-screen">
-  <div class="loading-content">
-    <div class="loading-logo">Lemado<span class="dot">.</span></div>
-    <div class="loader-ring"></div>
-  </div>
-</div>
-  
-  <!-- Yangi Suyuqlik Effekti -->
-  <div class="liquid-container">
-    <div class="liquid-blob blue"></div>
-    <div class="liquid-blob red"></div>
-    <div class="liquid-overlay"></div>
-  </div>
+    <div class="portal-container">
+        <header class="portal-header">
+            <h1 class="brand-logo">uLemado <span>Hub</span></h1>
+            <div id="digital-clock" class="widget-clock">00:00:00</div>
+            
+            <div class="auth-section">
+                <button id="login-btn" class="btn-primary" onclick="openModal()">Kirish</button>
+                <div id="user-profile" class="hidden">
+                    <span id="user-name-display" class="user-greeting">Salom, Foydalanuvchi</span>
+                    <button class="btn-outline" onclick="logout()">Chiqish</button>
+                </div>
+            </div>
+        </header>
 
+        <section class="search-section">
+            <form action="https://www.google.com/search" method="GET" target="_blank" class="search-form">
+                <input type="text" name="q" placeholder="Internetdan qidirish yoki URL manzili..." autocomplete="off" required>
+                <button type="submit">Qidirish</button>
+            </form>
+        </section>
 
+        <main class="services-grid">
+            <div class="card widget-weather">
+                <h3>🌤️ Ob-havo</h3>
+                <p id="weather-temp">Yuklanmoqda...</p>
+                <span class="city">Toshkent, UZ</span>
+            </div>
 
-  
+            <div class="card widget-news">
+                <h3>📰 Soʻnggi Yangiliklar</h3>
+                <ul id="news-list">
+                    <li><a href="#">uLemado browser alfa-versiyasi ishga tushdi</a></li>
+                    <li><a href="#">AI integratsiyasi kelasi oyda kutilmoqda</a></li>
+                </ul>
+            </div>
 
-<!-- TOAST -->
-<div id="toast"></div>
-
-<!-- CART SIDEBAR -->
-<div id="cart-sidebar">
-  <div class="cart-header">
-    <h3>🛒 Savatcha</h3>
-    <button onclick="toggleCart()" style="background:var(--gray-100);border:none;padding:8px 14px;border-radius:20px;cursor:pointer;font-weight:600">✕ Yopish</button>
-  </div>
-  <div id="cart-items"></div>
-  <div class="cart-total" id="cart-total-section" style="display:none">
-    <div style="display:flex;justify-content:space-between;font-size:18px;font-weight:800;margin-bottom:16px">
-      <span>Jami:</span>
-      <span id="cart-total-price" style="color:var(--red)"></span>
-    </div>
-    <button class="btn btn-red" style="width:100%;padding:14px" onclick="checkout()">Buyurtma berish 🚀</button>
-  </div>
-  <div id="cart-empty" style="text-align:center;padding:40px;color:var(--gray-400)">
-    <div style="font-size:48px;margin-bottom:12px">🛒</div>
-    <p>Savatcha bo'sh</p>
-  </div>
-</div>
-
-<!-- LOGIN MODAL -->
-<div class="modal-overlay" id="login-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
-    <h2>Kirish</h2>
-    <p class="form-note">Lemado hisobingizga kiring</p>
-    <div class="tab-btns">
-      <button class="tab-btn active" onclick="switchAuthTab('login')">Kirish</button>
-      <button class="tab-btn" onclick="switchAuthTab('register')">Ro'yxatdan o'tish</button>
-    </div>
-    <div id="login-form">
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" id="login-username" placeholder="username kiriting">
-        <div class="form-error" id="login-err"></div>
-      </div>
-      <div class="form-group">
-        <label>Parol</label>
-        <input type="password" id="login-password" placeholder="parol kiriting">
-      </div>
-      <button class="btn btn-red" style="width:100%;padding:13px;font-size:15px" onclick="login()">Kirish</button>
-    </div>
-    <div id="register-form" style="display:none">
-      <div class="form-group">
-        <label>To'liq ism</label>
-        <input type="text" id="reg-name" placeholder="Ismingizni kiriting">
-      </div>
-      <div class="form-group">
-        <label>Username (unikal)</label>
-        <input type="text" id="reg-username" placeholder="username (boshqalar olib bo'lmaydi)">
-        <div class="form-error" id="reg-err"></div>
-      </div>
-      <div class="form-group">
-        <label>Parol</label>
-        <input type="password" id="reg-password" placeholder="kuchli parol">
-      </div>
-      <div class="form-group">
-        <label>Parolni tasdiqlang</label>
-        <input type="password" id="reg-password2" placeholder="parolni takrorlang">
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="reg-email" placeholder="email@example.com">
-      </div>
-      <button class="btn btn-red" style="width:100%;padding:13px;font-size:15px" onclick="register()">Ro'yxatdan o'tish</button>
-    </div>
-  </div>
-</div>
-
-<!-- CREATE STORE MODAL -->
-<div class="modal-overlay" id="store-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('store-modal')">✕</button>
-    <h2>🏪 Do'kon yaratish</h2>
-    <p class="form-note">O'z brendingizni yarating va savdo qilishni boshlang</p>
-    <div class="form-group">
-      <label>Do'kon nomi (brend)</label>
-      <input type="text" id="store-name" placeholder="Masalan: TechShop UZ">
-    </div>
-    <div class="form-group">
-      <label>Kategoriya</label>
-      <select id="store-cat">
-        <option>Elektronika</option>
-        <option>Kiyim-kechak</option>
-        <option>Oziq-ovqat</option>
-        <option>Kosmetika</option>
-        <option>Uy-ro'zg'or</option>
-        <option>Sport</option>
-        <option>Kitoblar</option>
-        <option>Boshqa</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Tavsif</label>
-      <textarea id="store-desc" placeholder="Do'koningiz haqida qisqacha..."></textarea>
-    </div>
-    
-    <div style="background:var(--red-light);border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:var(--red-dark)">
-      ℹ️ Do'kon tasdiqlangandan keyin "✓ Rasmiy" belgisi beriladi.
-    </div>
-    <button class="btn btn-red" style="width:100%;padding:13px" onclick="createStore()">Do'kon yaratish 🚀</button>
-  </div>
-</div>
-
-<!-- ADD PRODUCT MODAL -->
-<div class="modal-overlay" id="product-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('product-modal')">✕</button>
-    <h2>➕ Mahsulot qo'shish</h2>
-    <div class="form-group">
-      <label>Mahsulot nomi</label>
-      <input type="text" id="prod-name" placeholder="Mahsulot nomi">
-    </div>
-    <div class="form-group">
-      <label>Tavsif</label>
-      <textarea id="prod-desc" placeholder="Mahsulot haqida..."></textarea>
-    </div>
-    <div class="form-group">
-      <label>Narx (so'm)</label>
-      <input type="number" id="prod-price" placeholder="0">
-    </div>
-    <div class="form-group">
-      <label>Kategoriya</label>
-      <select id="prod-cat">
-        <option>Elektronika</option><option>Kiyim-kechak</option><option>Oziq-ovqat</option>
-        <option>Kosmetika</option><option>Uy-ro'zg'or</option><option>Sport</option><option>Kitoblar</option>
-      </select>
-    </div>
-    <button class="btn btn-red" style="width:100%;padding:13px" onclick="addProduct()">Qo'shish</button>
-  </div>
-</div>
-
-<!-- ORDER DETAIL MODAL -->
-<div class="modal-overlay" id="order-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('order-modal')">✕</button>
-    <h2>📦 Buyurtma ma'lumotlari</h2>
-    <div id="order-detail-content"></div>
-  </div>
-</div>
-
-<!-- MAIN SITE -->
-<div id="main-site">
-  <!-- NAV -->
-  <nav>
-    <div class="nav-inner">
-      <div class="logo" onclick="showPage('home')">L<span>emado</span></div>
-      <div class="search-bar">
-        <span class="icon">🔍</span>
-        <input type="text" placeholder="Mahsulot yoki do'kon qidiring..." id="search-input" oninput="searchProducts()">
-      </div>
-      <div class="nav-actions">
- <button class="cart-btn" onclick="toggleCart()">
-  🛒 <span class="cart-badge" id="cart-count">0</span>
-</button>
-
-  <!-- 1. KİRİSH TUGMASI (Mehmonlar uchun) -->
-<button id="auth-login-btn" class="btn btn-red" onclick="openModal('login-modal')">Kirish</button>
-  <!-- 2. PROFIL DROPDOWN (Tizimga kirganlar uchun - boshida yashirin) -->
-  <div id="user-profile-wrap" class="dropdown hidden">
-    <div class="user-avatar" onclick="toggleDropdown(event)">L</div>
-    <div class="dropdown-menu">
-      <div class="dropdown-item">Mening profilim</div>
-      <div class="dropdown-item" onclick="openAdminPanel()">Admin Panel</div>
-      <div class="dropdown-item" style="color: var(--red);" onclick="logoutUser()">Chiqish</div>
-    </div>
-  </div>
-</div>
-  </nav>
-
-  <!-- HOME PAGE -->
-  <div id="page-home">
-    <div class="hero">
-      <h1>Lemado</h1>
-      <p>Minglab mahsulotlar, ishonchli do'kon va zavodlar, qulay narxlar</p>
-      <div class="hero-cta">
-        <button class="btn" style="background:white;color:var(--red-dark);font-size:16px;padding:14px 28px" onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})">Xarid qilish 🛒</button>
-       <!-- Bosh sahifadagi tugma -->
-        <button id="main-store-btn" class="btn btn-red" onclick="handleMainStoreBtn()">Do'kon ochish 🏪</button>  
-      </div>
+            <div class="card widget-apps">
+                <h3>🚀 Tezkor Xizmatlar</h3>
+                <div class="apps-links">
+                    <a href="https://github.com" target="_blank" class="app-item">GitHub</a>
+                    <a href="#" class="app-item">Musiqa</a>
+                    <a href="#" class="app-item">AI Chat</a>
+                    <a href="#" class="app-item">Sozlamalar</a>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <div class="container">
-      <div class="create-store-banner">
-        <div>
-          <h3>O'z biznesingizni boshlang!</h3>
-          <p>Do'kon oching, brendingizni yarating, mahsulotlaringizni soting!</p>
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Tizimga kirish</h2>
+            
+            <form id="auth-form" onsubmit="handleAuth(event)">
+                <input type="email" id="auth-email" placeholder="Email manzilingiz" required>
+                <input type="password" id="auth-password" placeholder="Parol" required>
+                
+                <button type="submit" class="btn-primary full-width">Tasdiqlash</button>
+            </form>
+            
+            <p class="toggle-text">
+                Akkauntingiz yo'qmi? <span onclick="toggleAuthMode()">Ro'yxatdan o'tish</span>
+            </p>
         </div>
-        <button class="btn" style="background:white;color:var(--blue-dark);font-size:15px;padding:12px 24px;flex-shrink:0" onclick="openStoreCreation()">Boshlash →</button>
-      </div>
-
-      <div class="section" id="products-section">
-        <div class="section-title">Mahsulotlar <span class="badge">YANGI</span></div>
-        <div class="chips" id="category-chips">
-          <div class="chip active" onclick="filterCategory('Barchasi',this)">Barchasi</div>
-          <div class="chip" onclick="filterCategory('Elektronika',this)">Elektronika</div>
-          <div class="chip" onclick="filterCategory('Kiyim-kechak',this)">Kiyim</div>
-          <div class="chip" onclick="filterCategory('Oziq-ovqat',this)">Oziq-ovqat</div>
-          <div class="chip" onclick="filterCategory('Kosmetika',this)">Kosmetika</div>
-          <div class="chip" onclick="filterCategory('Sport',this)">Sport</div>
-          <div class="chip" onclick="filterCategory('Kitoblar',this)">Kitoblar</div>
-        </div>
-        <div class="products-grid" id="products-grid"></div>
-      </div>
-
-      <div class="section">
-        <div class="section-title">Rasmiy Do'konlar</div>
-        <div class="stores-grid" id="stores-grid-home"></div>
-      </div>
     </div>
-  </div>
 
-  <!-- STORES PAGE -->
-  <div id="page-stores" style="display:none" class="container" style="padding-top:40px">
-    <div class="section">
-      <div class="section-title">Barcha Do'konlar</div>
-      <div class="stores-grid" id="all-stores-grid"></div>
-    </div>
-  </div>
-
-  <!-- ORDERS PAGE -->
-  <div id="page-orders" style="display:none" class="container">
-    <div class="section">
-      <div class="section-title">📦 Buyurtmalarim</div>
-      <div class="orders-list" id="orders-list">
-        <div style="text-align:center;padding:40px;color:var(--gray-400)">
-          <div style="font-size:48px;margin-bottom:12px">📦</div>
-          <p>Hozircha buyurtma yo'q</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MY STORE PAGE -->
-  <div id="page-my-store" style="display:none" class="container">
-    <div class="section" id="my-store-content"></div>
-  </div>
-
-  <footer>
-    <div class="footer-logo">L<span>emado</span></div>
-    <p>O'zbekistonning trenddagi bozori!</p>
-    <p style="margin-top:8px;font-size:12px">Biz bilan Uzbekhub orqali bog'lanish: <a href="https://uzbekhub.uz/lemado" target="_blank" style="color:var(--red)">MUROJAAT QILISH</a></p>
-  </footer>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="admin-panel">
-  <div class="admin-layout">
-    <div class="admin-sidebar">
-      <div class="admin-logo">Lemado <span style="color:var(--red)">Admin</span></div>
-      <div class="admin-nav">
-        <div class="admin-nav-item active" onclick="showAdminTab('dashboard')">📊 Dashboard</div>
-        <div class="admin-nav-item" onclick="showAdminTab('users')">👥 Foydalanuvchilar</div>
-        <div class="admin-nav-item" onclick="showAdminTab('stores-admin')">🏪 Do'konlar</div>
-        <div class="admin-nav-item" onclick="showAdminTab('products-admin')">📦 Mahsulotlar</div>
-        <div class="admin-nav-item" onclick="showAdminTab('orders-admin')">🛒 Buyurtmalar</div>
-        <div style="padding:12px 20px;margin-top:20px;font-size:13px;opacity:0.5">TIZIM</div>
-        <div class="admin-nav-item" onclick="exitAdmin()">🏠 Saytga qaytish</div>
-        <div class="admin-nav-item" style="color:#f44336" onclick="logout()">🚪 Chiqish</div>
-      </div>
-    </div>
-    <div class="admin-content">
-      <div class="admin-header">
-        <div style="font-size:20px;font-weight:800">Admin Panel</div>
-        <div style="font-size:14px;color:var(--gray-500)" id="admin-welcome"></div>
-      </div>
-
-      <!-- DASHBOARD -->
-      <div id="admin-tab-dashboard" class="admin-section active">
-        <div class="admin-cards">
-          <div class="admin-card red"><div class="label">Jami foydalanuvchilar</div><div class="value" id="stat-users">0</div></div>
-          <div class="admin-card blue"><div class="label">Do'konlar</div><div class="value" id="stat-stores">0</div></div>
-          <div class="admin-card"><div class="label">Mahsulotlar</div><div class="value" id="stat-products">0</div></div>
-          <div class="admin-card"><div class="label">Buyurtmalar</div><div class="value" id="stat-orders">0</div></div>
-        </div>
-        <div style="background:white;border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow)">
-          <h3 style="margin-bottom:16px;font-weight:800">So'nggi faoliyat</h3>
-          <div id="admin-activity" style="color:var(--gray-500);font-size:14px;line-height:2">
-            Tizim ishga tushirildi ✓<br>
-            Ma'lumotlar yuklandi ✓<br>
-            Admin sessiyasi boshlandi ✓
-          </div>
-        </div>
-      </div>
-<div id="admin-tab-users" class="admin-section">
-  <h3 style="margin-bottom:20px;font-weight:800; color: var(--gray-900);">Foydalanuvchilar boshqaruvi</h3>
-  <div class="table-responsive">
-    <table>
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Ism</th>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Status</th>
-          <th>Amallar</th>
-        </tr>
-      </thead>
-      <tbody id="users-table"></tbody>
-    </table>
-  </div>
-</div>
-
-<div id="admin-tab-stores-admin" class="admin-section">
-  <h3 style="margin-bottom:20px;font-weight:800; color: var(--gray-900);">Do'konlar boshqaruvi</h3>
-  <div class="table-responsive">
-    <table>
-      <thead>
-        <tr>
-          <th>Do'kon</th>
-          <th>Egasi</th>
-          <th>Kategoriya</th>
-          <th>Status</th>
-          <th>Amallar</th>
-        </tr>
-      </thead>
-      <tbody id="stores-table"></tbody>
-    </table>
-  </div>
-</div>
-
-<div id="admin-tab-products-admin" class="admin-section">
-  <h3 style="margin-bottom:20px;font-weight:800; color: var(--gray-900);">Mahsulotlar boshqaruvi</h3>
-  <div class="table-responsive">
-    <table>
-      <thead>
-        <tr>
-          <th>Mahsulot</th>
-          <th>Do'kon</th>
-          <th>Narx</th>
-          <th>Kategoriya</th>
-          <th>Amallar</th>
-        </tr>
-      </thead>
-      <tbody id="products-table-admin"></tbody>
-    </table>
-  </div>
-</div>
-
-<div id="admin-tab-orders-admin" class="admin-section">
-  <h3 style="margin-bottom:20px;font-weight:800; color: var(--gray-900);">Buyurtmalar boshqaruvi</h3>
-  <div class="table-responsive">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Foydalanuvchi</th>
-          <th>Mahsulotlar</th>
-          <th>Jami</th>
-          <th>Status</th>
-          <th>Sana</th>
-        </tr>
-      </thead>
-      <tbody id="orders-table-admin"></tbody>
-    </table>
-  </div>
-</div>
-    </div>
-  </div>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
